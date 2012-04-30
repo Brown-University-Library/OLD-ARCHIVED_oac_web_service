@@ -1,0 +1,8 @@
+{{ error|safe }}
+<br />
+<br />
+<ul>
+    {% for message in trace %}
+        <li>{{ message }}</li>
+    {% endfor %}
+</ul>
