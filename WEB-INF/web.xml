@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app
+     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+
+  <display-name>OAC Web</display-name>
+  <description>OAC Web Application</description>
+
+  <servlet>
+    <servlet-name>modjy</servlet-name>
+    <servlet-class>com.xhaus.modjy.ModjyJServlet</servlet-class>
+    
+    <init-param>
+      <param-name>python.home</param-name>
+      <param-value>WEB-INF/lib-python</param-value>
+    </init-param>
+    
+    <init-param>
+      <param-name>app_import_name</param-name>
+      <param-value>oac_web_service.app</param-value>
+    </init-param>
+    
+    <init-param>
+      <param-name>cache_callables</param-name>
+      <param-value>1</param-value>
+    </init-param>
+    
+    <init-param>
+      <param-name>reload_on_mod</param-name>
+      <param-value>1</param-value>
+    </init-param>
+    
+    <init-param>
+      <param-name>load_site_packages</param-name>
+      <param-value>1</param-value>
+    </init-param>
+    
+    <init-param>
+      <param-name>log_level</param-name>
+      <param-value>debug</param-value>
+<!--  <param-value>info</param-value>  -->
+<!--  <param-value>warn</param-value>  -->
+<!--  <param-value>error</param-value> -->
+<!--  <param-value>fatal</param-value> -->
+    </init-param>
+
+    <load-on-startup>1</load-on-startup>
+
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>modjy</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>
