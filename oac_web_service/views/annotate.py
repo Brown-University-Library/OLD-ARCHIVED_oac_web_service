@@ -44,8 +44,8 @@ def annotate():
                              target_uri = request.args['target_uri'],
                              dc_title = request.args['dc_title']
                             )
-        annote.create_body()
-        annote.create_annotation()
+        annote.build_body()
+        annote.build_annotation()
         annote.submit()
         annote.validate()
     except AnnotationError, ex:
