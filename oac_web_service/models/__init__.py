@@ -1,1 +1,1 @@
-import oac_web_service.models.annotation
+from oac_web_service.models import *
