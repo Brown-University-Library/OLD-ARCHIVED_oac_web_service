@@ -38,9 +38,8 @@ def annotate():
     """
 
     try:
-        raise AnnotationError("error")
-        annote = Annotation( target_pid=request.args['target_pid'],
-                             body_xml=request.args['body_xml'],
+        annote = Annotation( target_pid = request.args['target_pid'],
+                             body_xml = request.args['body_xml'],
                              target_uri = request.args['target_uri'],
                              dc_title = request.args['dc_title']
                             )

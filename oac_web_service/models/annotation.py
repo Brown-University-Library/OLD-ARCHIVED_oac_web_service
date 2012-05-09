@@ -1,3 +1,8 @@
+import oac_web_service.fedora_settings as config
+from xml.etree import ElementTree as ET
+import base64
+import urllib2
+
 class Annotation(object):
     def __init__(self, **kwargs):
         self._target_pid = kwargs.pop('target_pid')
@@ -6,6 +11,8 @@ class Annotation(object):
         self._dc_title = kwargs.pop('dc_title')
         # Completed by create_body
         self._body_pid = None
+        self._body = None
+        self._annotation = None
         self._errors = []
 
     def build_body(self):
@@ -30,7 +37,7 @@ class Annotation(object):
         # Rels Ext Datastream
         foxml.create_rels_ext_datastream(rdf_element=rdf)
 
-        return foxml.get_foxml()
+        self._body = foxml.get_foxml()
 
     def build_annotation(self):
         """
@@ -55,7 +62,7 @@ class Annotation(object):
         # Rels Ext Datastream
         foxml.create_rels_ext_datastream(rdf_element=rdf)
 
-        return foxml.get_foxml()
+        self._annotation = foxml.get_foxml()
         
 
     def validate(self):
@@ -69,12 +76,49 @@ class Annotation(object):
         """
             Send body and annotate objects to Fedora
         """
+        if self._body:
+            response = post_foxml(element=self._body)
+
+        if self._annotation:
+            response = post_foxml(element=self._annotation)
+
+    def post_foxml(self, **kwargs):
+        """
+            Post FOXML to the fedora repository, thus creating a new object
+        """
+        username = config.FEDORA_USER
+        password = config.FEDORA_PASS
+        url = config.FEDORA_INGEST_URL
+        data = ET.tostring(kwargs.pop('element'))
+
+        request = urllib2.Request( url, data )
+
+        base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
+        request.add_header( "Authorization", "Basic %s" % base64_auth_string )
+        request.add_header( "Content-type", "text/xml" )
+        response = urllib2.urlopen( request ).read()
+        request.close()
+        return response
 
     def get_pid(self):
         """
             Query the Fedora system for a PID
         """
-        return 1
+        username = config.FEDORA_USER
+        password = config.FEDORA_PASS
+        url = config.FEDORA_PID_URL
+
+        request = urllib2.Request( url )
+
+        base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
+        request.add_header( "Authorization", "Basic %s" % base64_auth_string )
+        request.add_header( "Content-type", "text/xml" )
+        response = urllib2.urlopen( request )
+        element = ET.fromstring(response.read())
+        request.close()
+        # The output should be a PID encapsulated in XML block
+        # of pidList/pid.  TODO: Return just the pid string.
+        return element
 
 class AnnotationError(Exception):
     def __init__(self, value):
