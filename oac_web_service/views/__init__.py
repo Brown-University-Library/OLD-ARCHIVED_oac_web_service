@@ -1,1 +1,1 @@
-from oac_web_service.views import *
+from oac_web_service.views import annotate, index

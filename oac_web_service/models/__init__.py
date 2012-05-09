@@ -1,1 +1,1 @@
-from oac_web_service.models import *
+from oac_web_service.models import annotation, foxml
