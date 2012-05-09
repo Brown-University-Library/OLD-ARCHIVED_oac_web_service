@@ -1,5 +1,5 @@
 from xml.etree import ElementTree as ET
-from xml.etree.ElementTree import Element, XML
+from xml.etree.ElementTree import Element
 
 class Foxml(object):
 
@@ -191,7 +191,7 @@ class Foxml(object):
         xml_content = Foxml.get_xml_content_element()
         xml_content.append(kwargs.pop('rdf_element'))
 
-        datastream_version = Foxml.get_datastream_version_element(format_url=cls.RELSEXT_INFO_URI, id="RELS-EXT.0", mime="application/rdf+xml", label="RDF Statements about this object")
+        datastream_version = Foxml.get_datastream_version_element(format_uri=cls.RELSEXT_INFO_URI, id="RELS-EXT.0", mime="application/rdf+xml", label="RDF Statements about this object")
         datastream_version.append(xml_content)
 
         datastream = Foxml.get_datastream_element(id="RELS-EXT", state="A", control_group="X")
