@@ -1,7 +1,7 @@
 import sys
+import ast
 import traceback
-from flask import render_template
-from flask import request
+from flask import render_template, request, jsonify
 from oac_web_service import app
 from oac_web_service.models.annotation import Annotation, AnnotationError
 
@@ -37,8 +37,8 @@ def annotate():
         >>> post_url = "http://127.0.0.1:5000/annotate"
         >>> params = { 
                 "targets" : [
-                    {'pid' : 'test:1', 'uri' : "test:1#xpointer('/foo)"},
-                    {'pid' : 'test:2', 'uri' : "test:2#xpointer('/bar)"}
+                    {'pid' : 'test:1', 'uri' : "test:1#xpointer('/foo')"},
+                    {'pid' : 'test:2', 'uri' : "test:2#xpointer('/bar')"}
                 ],
                 "body_xml" : "<TEI><body>text body</body></TEI>",
                 "dc_title" : "Dublin Core Title"
@@ -46,11 +46,26 @@ def annotate():
         >>> encoded_data = urllib.urlencode( params )
         >>> request = urllib2.Request( post_url, encoded_data )
         >>> response = urllib2.urlopen( request )
-
+        >>> print response.read()
+        {
+          "errors": [],
+          "targets": [
+            {
+              "uri": "test:1#xpointer('/foo)",
+              "pid": "test:1"
+            },
+            {
+              "uri": "test:2#xpointer('/bar)",
+              "pid": "test:2"
+            }
+          ],
+          "body_pid": "changeme:180",
+          "annotation_pid": "changeme:181"
+        }
     """
 
     try:
-        annote = Annotation(targets = request.form['targets'],
+        annote = Annotation(targets = ast.literal_eval(request.form['targets']),
                             body_xml = request.form['body_xml'],
                             dc_title = request.form['dc_title'])
         annote.build_body()
@@ -60,5 +75,8 @@ def annotate():
     except AnnotationError, ex:
         return render_template('error.html', error=ex.value, trace=traceback.format_stack())
     else:
-        return make_response("OK", 201)
-        
+        # LOOK: https://github.com/mitsuhiko/flask/issues/478
+        # return jsonify(annote.results), 201
+        resp = jsonify(annote.results)
+        resp.status_code = 201
+        return resp

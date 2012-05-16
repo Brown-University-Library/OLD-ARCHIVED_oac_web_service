@@ -113,8 +113,6 @@ class Foxml(object):
         body.set("{%s}resource" % cls.RDFNS, "info:fedora/" + body_pid + "/datastreams/OAC_BODY/content")
         descrip.append(body)
 
-        print targets
-
         for target in targets:
             t = Element("{%s}hasTarget" % cls.OANS)
             t.set("{%s}resource" % cls.RDFNS, "info:fedora/" + target['uri'])

@@ -85,6 +85,15 @@ class Annotation(object):
         if self._annotation:
             self._annotation_response = self.post_foxml(element=self._annotation)
 
+    def get_results(self):
+        return  {
+                    'errors'            : self._errors,
+                    'body_pid'          : self._body_response,
+                    'annotation_pid'    : self._annotation_response,
+                    'targets'           : self._targets
+                }
+    results = property(get_results, None)
+
     def post_foxml(self, **kwargs):
         """
             Post FOXML to the fedora repository, thus creating a new object

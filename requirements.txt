@@ -4,3 +4,4 @@ Werkzeug==0.8.3
 wsgiref==0.1.2
 unittest2==0.5.1
 nose==1.1.2
+simplejson==2.5.2
