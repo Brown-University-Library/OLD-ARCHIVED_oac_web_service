@@ -5,15 +5,19 @@ from xml.etree.ElementTree import dump
 
 class FoxmlTest(unittest.TestCase):
     def setUp(self):
-        self.annotation = Annotation(target_pid = 'target:1',
-                                     body_xml = '<foxml />',
-                                     target_uri = 'amazing:uri',
-                                     dc_title = 'title'
+        self.annotation = Annotation(target_pid = 'demo:26',
+                                     body_xml = '<TEI><body>I love the word cow!</body></TEI>',
+                                     target_uri = 'demo:26#xpointer(\'//cow\')',
+                                     dc_title = 'Annotation about my love of the the word \'cow\''
                                     )
 
     def test_pid_creation(self):
         pid1 = int(self.annotation.get_pid().split(":")[-1])
         pid2 = int(self.annotation.get_pid().split(":")[-1])
-
         assert pid2 > pid1
 
+    def test_submission(self):
+    	self.annotation.build_body()
+        self.annotation.build_annotation()
+        self.annotation.submit()
+        assert self.annotation.validate()

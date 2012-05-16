@@ -71,34 +71,49 @@ class Annotation(object):
             Validate that the body and annotation objects
             were created in Fedora correctly
         """
-        return len(self._errors == 0)
+        if not len(self._errors) == 0:
+            raise AnnotationError(" ".join(self._errors))
+        else:
+            return True
 
     def submit(self):
         """
             Send body and annotate objects to Fedora
         """
         if self._body:
-            response = post_foxml(element=self._body)
+            self._body_response = self.post_foxml(element=self._body)
 
         if self._annotation:
-            response = post_foxml(element=self._annotation)
+            self._annotation_response = self.post_foxml(element=self._annotation)
 
     def post_foxml(self, **kwargs):
         """
             Post FOXML to the fedora repository, thus creating a new object
         """
-        username = config.FEDORA_USER
-        password = config.FEDORA_PASS
-        url = config.FEDORA_INGEST_URL
-        data = ET.tostring(kwargs.pop('element'))
+        try:
+            username = config.FEDORA_USER
+            password = config.FEDORA_PASS
+            url = config.FEDORA_INGEST_URL
+            data = ET.tostring(kwargs.pop('element'))
 
-        request = urllib2.Request( url, data )
+            request = urllib2.Request( url, data )
 
-        base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
-        request.add_header( "Authorization", "Basic %s" % base64_auth_string )
-        request.add_header( "Content-type", "text/xml" )
-        response = urllib2.urlopen( request ).read()
-        return response
+            base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
+            request.add_header( "Authorization", "Basic %s" % base64_auth_string )
+            request.add_header( "Content-type", "text/xml" )
+            response = urllib2.urlopen( request )
+            return response.read()
+
+        except urllib2.HTTPError, e:
+            if e.code == 201:
+                return e.read()
+            else:
+                self._errors.append(e.read())
+                return False
+
+        except urllib2.URLError, e:
+            self._errors.append(e.reason)
+            return False
 
     def get_pid(self):
         """
