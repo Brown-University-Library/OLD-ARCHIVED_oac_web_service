@@ -148,7 +148,7 @@ class Foxml(object):
 
     @classmethod
     def get_datastream_element(cls, **kwargs):
-        datastream = Element("{%s}datasteam" % cls.FOXMLNS)
+        datastream = Element("{%s}datastream" % cls.FOXMLNS)
         datastream.set("ID", kwargs.pop('id'))
         datastream.set("STATE", kwargs.pop('state'))
         datastream.set("CONTROL_GROUP", kwargs.pop('control_group'))    
@@ -157,9 +157,9 @@ class Foxml(object):
     @classmethod
     def get_datastream_version_element(cls, **kwargs):
         """
-        <foxml:datasteamVersion ID="RELS-EXT.0" LABEL="RDF Statements about this object" MIMETYPE="application/rdf+xml" xmlns:foxml="info:fedora/fedora-system:def/foxml#" />
+        <foxml:datastreamVersion ID="RELS-EXT.0" LABEL="RDF Statements about this object" MIMETYPE="application/rdf+xml" xmlns:foxml="info:fedora/fedora-system:def/foxml#" />
         """
-        datastreamVersion = Element("{%s}datasteamVersion" % cls.FOXMLNS)
+        datastreamVersion = Element("{%s}datastreamVersion" % cls.FOXMLNS)
         datastreamVersion.set("ID", kwargs.pop('id'));
         datastreamVersion.set("MIMETYPE", kwargs.pop('mime'));
         datastreamVersion.set("LABEL", kwargs.pop('label'));
@@ -182,7 +182,7 @@ class Foxml(object):
         datastream_version = Foxml.get_datastream_version_element(format_uri=cls.OAIDC_INFO_URI, id="DC.0", mime="text/xml", label="Dublin Core Record for this object")
         datastream_version.append(xml_content)
 
-        datastream = Foxml.get_datastream_element(id="DC", state="A", control_group="A")
+        datastream = Foxml.get_datastream_element(id="DC", state="A", control_group="M")
         datastream.append(datastream_version)
         return datastream
 
@@ -194,6 +194,6 @@ class Foxml(object):
         datastream_version = Foxml.get_datastream_version_element(format_uri=cls.RELSEXT_INFO_URI, id="RELS-EXT.0", mime="application/rdf+xml", label="RDF Statements about this object")
         datastream_version.append(xml_content)
 
-        datastream = Foxml.get_datastream_element(id="RELS-EXT", state="A", control_group="X")
+        datastream = Foxml.get_datastream_element(id="RELS-EXT", state="A", control_group="M")
         datastream.append(datastream_version)
         return datastream
