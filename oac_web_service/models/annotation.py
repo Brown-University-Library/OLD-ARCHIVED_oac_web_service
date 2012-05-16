@@ -6,8 +6,7 @@ import urllib2
 
 class Annotation(object):
     def __init__(self, **kwargs):
-        self._target_pid = kwargs.pop('target_pid')
-        self._target_uri = kwargs.pop('target_uri')
+        self._targets = kwargs.pop('targets')
         self._body_xml = kwargs.pop('body_xml')
         self._dc_title = kwargs.pop('dc_title')
         # Completed by create_body
@@ -27,7 +26,7 @@ class Annotation(object):
         """
         self._body_pid = self.get_pid()
 
-        rdf = Foxml.get_rdf_body_element(pid=self._body_pid, target_pid=self._target_pid)
+        rdf = Foxml.get_rdf_body_element(pid=self._body_pid, targets=self._targets)
         dublin_core = Foxml.get_dublin_core_element(pid=self._body_pid, title="Open Annotation Collaboration body object (B-1)")
 
         foxml = Foxml(pid=self._body_pid)
@@ -52,7 +51,7 @@ class Annotation(object):
         """
         self._annotation_pid = self.get_pid()
 
-        rdf = Foxml.get_rdf_annotation_element(pid=self._annotation_pid, body_pid=self._body_pid, target_uri=self._target_uri)
+        rdf = Foxml.get_rdf_annotation_element(pid=self._annotation_pid, body_pid=self._body_pid, targets=self._targets)
         dublin_core = Foxml.get_dublin_core_element(pid=self._annotation_pid, title=self._dc_title)
 
         foxml = Foxml(pid=self._annotation_pid)

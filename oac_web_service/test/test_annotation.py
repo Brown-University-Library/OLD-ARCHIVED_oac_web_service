@@ -5,10 +5,10 @@ from xml.etree.ElementTree import dump
 
 class FoxmlTest(unittest.TestCase):
     def setUp(self):
-        self.annotation = Annotation(target_pid = 'demo:26',
+        self.annotation = Annotation(targets = [{'pid' : 'demo:26', 'uri' : "demo:26#xpointer('//cow')"},
+                        						{'pid' : 'demo:SmileyDinnerware', 'uri' : "demo:SmileyDinnerware#xpointer('//somepixelreference')"}],
                                      body_xml = '<TEI><body>I love the word cow!</body></TEI>',
-                                     target_uri = 'demo:26#xpointer(\'//cow\')',
-                                     dc_title = 'Annotation about my love of the the word \'cow\''
+                                     dc_title = "Annotation about my love of the the word 'cow'"
                                     )
 
     def test_pid_creation(self):

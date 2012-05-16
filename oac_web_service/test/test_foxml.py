@@ -7,6 +7,8 @@ class FoxmlTest(unittest.TestCase):
     def setUp(self):
         self.foxml = Foxml(pid='1')
         self.foxml.create_object_properties()
+        self.targets = [{'pid' : 'test:1', 'uri' : "test:1#xpointer('/foo)"},
+                        {'pid' : 'test:2', 'uri' : "test:2#xpointer('/bar)"}]
         # Object Properties
         
         # Dublin Core Datastream
@@ -30,13 +32,13 @@ class FoxmlTest(unittest.TestCase):
         op = Foxml.get_object_properties()
 
     def test_rdf_body_element(self):
-        rdf = Foxml.get_rdf_body_element(pid='1', target_pid='2')
+        rdf = Foxml.get_rdf_body_element(pid='1', targets=self.targets)
 
     def text_rdf_annotation_element(self):
-        rdf = Foxml.get_rdf_annotation_element(pid='1', body_pid='body:2', target_uri="crazy:163#xpointer(/TEI%5B1%5D/text%5B1%5D/front%5B1%5D/div%5B1%5D)")
+        rdf = Foxml.get_rdf_annotation_element(pid='1', body_pid='body:2', targets=self.targets)
 
     def test_rels_ext_datastream(self):
-        rdf = Foxml.get_rdf_body_element(pid='1', target_pid='2')
+        rdf = Foxml.get_rdf_body_element(pid='1', targets=self.targets)
         rxds = Foxml.get_rels_ext_datastream(rdf_element=rdf)
 
     def test_dublin_core_element(self):

@@ -1,6 +1,7 @@
 import sys
 import traceback
 from flask import render_template
+from flask import request
 from oac_web_service import app
 from oac_web_service.models.annotation import Annotation, AnnotationError
 
@@ -9,18 +10,14 @@ def annotate():
     """
         POST a new annotation with the following parameters:
 
-        target_url: uri to what is being annotated, 
-                    i.e. repo:1234#xpointer('//foo') 
+        targets:  list of targets (dictionaries) contianing the 'pid' and 'uri' of each target
+                  i.e. [{'pid' : 'test:1', 'uri' : "test:1#xpointer('/foo)"},{'pid' : 'test:2', 'uri' : "test:2#xpointer('/bar)"}]
 
         body_xml: annotation in xml format, 
                   i.e. <TEI><body>Some TEI text goes here.</body></TEI>
 
         dc_title: Dublin Core title associated with the annotation, 
                   i.e. "dublin core title goes here" 
-
-        target_pid: Fedora PID for the target object,
-                    i.e. repo:1234
-
 
         Will create 2 Fedora objects.  One will represent the actual annotation (A-1)
         and one will be the body of text that annotates the Fedora object (B-1).
@@ -35,14 +32,27 @@ def annotate():
         Therefore Fedora object repo:1234 (T-1) is annotated by repo:1235 (A-1) and the
         body of the annotation (B-1) contains the annotation text.
 
+        >>> import urllib
+        >>> import urllib2
+        >>> post_url = "http://127.0.0.1:5000/annotate"
+        >>> params = { 
+                "targets" : [
+                    {'pid' : 'test:1', 'uri' : "test:1#xpointer('/foo)"},
+                    {'pid' : 'test:2', 'uri' : "test:2#xpointer('/bar)"}
+                ],
+                "body_xml" : "<TEI><body>text body</body></TEI>",
+                "dc_title" : "Dublin Core Title"
+            }
+        >>> encoded_data = urllib.urlencode( params )
+        >>> request = urllib2.Request( post_url, encoded_data )
+        >>> response = urllib2.urlopen( request )
+
     """
 
     try:
-        annote = Annotation( target_pid = request.args['target_pid'],
-                             body_xml = request.args['body_xml'],
-                             target_uri = request.args['target_uri'],
-                             dc_title = request.args['dc_title']
-                            )
+        annote = Annotation(targets = request.form['targets'],
+                            body_xml = request.form['body_xml'],
+                            dc_title = request.form['dc_title'])
         annote.build_body()
         annote.build_annotation()
         annote.submit()
