@@ -12,5 +12,8 @@ class FoxmlTest(unittest.TestCase):
                                     )
 
     def test_pid_creation(self):
-        dump(self.annotation.get_pid())
+        pid1 = int(self.annotation.get_pid().split(":")[-1])
+        pid2 = int(self.annotation.get_pid().split(":")[-1])
+
+        assert pid2 > pid1
 

@@ -97,7 +97,6 @@ class Annotation(object):
         request.add_header( "Authorization", "Basic %s" % base64_auth_string )
         request.add_header( "Content-type", "text/xml" )
         response = urllib2.urlopen( request ).read()
-        request.close()
         return response
 
     def get_pid(self):
@@ -115,10 +114,7 @@ class Annotation(object):
         request.add_header( "Content-type", "text/xml" )
         response = urllib2.urlopen( request )
         element = ET.fromstring(response.read())
-        request.close()
-        # The output should be a PID encapsulated in XML block
-        # of pidList/pid.  TODO: Return just the pid string.
-        return element
+        return element.find('pid').text
 
 class AnnotationError(Exception):
     def __init__(self, value):
