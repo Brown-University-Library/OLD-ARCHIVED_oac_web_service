@@ -1,4 +1,5 @@
 import oac_web_service.fedora_settings as config
+from oac_web_service.models.foxml import Foxml
 from xml.etree import ElementTree as ET
 import base64
 import urllib2
@@ -24,7 +25,7 @@ class Annotation(object):
             </rdf:Description>
         </rdf:RDF>
         """
-        self._body_pid = get_pid()
+        self._body_pid = self.get_pid()
 
         rdf = Foxml.get_rdf_body_element(pid=self._body_pid, target_pid=self._target_pid)
         dublin_core = Foxml.get_dublin_core_element(pid=self._body_pid, title="Open Annotation Collaboration body object (B-1)")
@@ -49,7 +50,7 @@ class Annotation(object):
             </rdf:Description>
         </rdf:RDF>
         """
-        self._annotation_pid = get_pid()
+        self._annotation_pid = self.get_pid()
 
         rdf = Foxml.get_rdf_annotation_element(pid=self._annotation_pid, body_pid=self._body_pid, target_uri=self._target_uri)
         dublin_core = Foxml.get_dublin_core_element(pid=self._annotation_pid, title=self._dc_title)
