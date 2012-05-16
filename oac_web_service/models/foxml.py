@@ -9,8 +9,8 @@ class Foxml(object):
     RDFNS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     ET._namespace_map[RDFNS] = 'rdf'
     
-    OACNS = "http://www.openannotation.org/ns/"
-    ET._namespace_map[OACNS] = 'oac'
+    OANS = "http://www.w3.org/ns/openannotation/core/"
+    ET._namespace_map[OANS] = 'oa'
 
     OAI_DC_NS = "http://www.openarchives.org/OAI/2.0/oai_dc/"
     ET._namespace_map[OAI_DC_NS] = 'oai_dc'
@@ -64,18 +64,18 @@ class Foxml(object):
         """
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
             <rdf:Description rdf:about="info:fedora/test:1000008762">
-                <oac:Body xmlns:oac="http://www.openannotation.org/ns/" rdf:resource="info:fedora/test:1000008762/datastreams/content/xml"></oac:Body>
-                <oac:Annotates xmlns:oac="http://www.openannotation.org/ns/" rdf:resource="info:fedora/test:1000006063"></oac:Annotates>
+                <oa:Body xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000008762/datastreams/content/xml"></oa:Body>
+                <oa:Annotates xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000006063"></oa:Annotates>
             </rdf:Description>
         </rdf:RDF>
         """
         pid = kwargs.pop('pid')
         target_pid = kwargs.pop('target_pid')
 
-        body = Element("{%s}Body" % cls.OACNS)
+        body = Element("{%s}Body" % cls.OANS)
         body.set("{%s}resource" % cls.RDFNS, "info:fedora/" + pid + "/datastreams/OAC_BODY/content")
 
-        annotates = Element("{%s}Annotates" % cls.OACNS)
+        annotates = Element("{%s}Annotates" % cls.OANS)
         annotates.set("{%s}resource" % cls.RDFNS, "info:fedora/" + target_pid)
 
         descrip = Element("{%s}Description" % cls.RDFNS)
@@ -93,9 +93,9 @@ class Foxml(object):
         """
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
             <rdf:Description rdf:about="info:fedora/test:1000008729">
-                <oac:hasBody xmlns:oac="http://www.openannotation.org/ns/" rdf:resource="info:fedora/test:1000008728/datastreams/content/xml"></oac:hasBody>
-                <oac:hasTarget xmlns:oac="http://www.openannotation.org/ns/" rdf:resource="info:fedora/test:1000006063#xpointer(/TEI%5B1%5D/text%5B1%5D/front%5B1%5D/div%5B1%5D/lg%5B1%5D/lg%5B1%5D)"></oac:hasTarget>
-                <oac:Annotation xmlns:oac="http://www.openannotation.org/ns/" rdf:resource="info:fedora/test:1000008729"></oac:Annotation>
+                <oa:hasBody xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000008728/datastreams/content/xml"></oa:hasBody>
+                <oa:hasTarget xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000006063#xpointer(/TEI%5B1%5D/text%5B1%5D/front%5B1%5D/div%5B1%5D/lg%5B1%5D/lg%5B1%5D)"></oa:hasTarget>
+                <oa:Annotation xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000008729"></oa:Annotation>
             </rdf:Description>
         </rdf:RDF>
         """
@@ -103,13 +103,13 @@ class Foxml(object):
         body_pid = kwargs.pop('body_pid')
         target_uri = kwargs.pop('target_uri')
 
-        body = Element("{%s}hasBody" % cls.OACNS)
+        body = Element("{%s}hasBody" % cls.OANS)
         body.set("{%s}resource" % cls.RDFNS, "info:fedora/" + body_pid + "/datastreams/OAC_BODY/content")
 
-        target = Element("{%s}hasTarget" % cls.OACNS)
+        target = Element("{%s}hasTarget" % cls.OANS)
         target.set("{%s}resource" % cls.RDFNS, "info:fedora/" + target_uri)
 
-        annotation = Element("{%s}Annotation" % cls.OACNS)
+        annotation = Element("{%s}Annotation" % cls.OANS)
         annotation.set("{%s}resource" % cls.RDFNS, "info:fedora/" + pid)
 
         descrip = Element("{%s}Description" % cls.RDFNS)

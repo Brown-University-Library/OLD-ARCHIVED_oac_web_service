@@ -20,8 +20,8 @@ class Annotation(object):
         """
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
             <rdf:Description rdf:about="info:fedora/test:1000008762">
-                <oac:Body xmlns:oac="http://www.openannotation.org/ns/" rdf:resource="info:fedora/test:1000008762/datastreams/content/xml"></oac:Body>
-                <oac:Annotates xmlns:oac="http://www.openannotation.org/ns/" rdf:resource="info:fedora/test:1000006063"></oac:Annotates>
+                <oa:Body xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000008762/datastreams/content/xml"></oa:Body>
+                <oa:Annotates xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000006063"></oa:Annotates>
             </rdf:Description>
         </rdf:RDF>
         """
@@ -44,9 +44,9 @@ class Annotation(object):
         """
         <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
             <rdf:Description rdf:about="info:fedora/test:1000008729">
-                <oac:hasBody xmlns:oac="http://www.openannotation.org/ns/" rdf:resource="info:fedora/test:1000008728/datastreams/content/xml"></oac:hasBody>
-                <oac:hasTarget xmlns:oac="http://www.openannotation.org/ns/" rdf:resource="info:fedora/test:1000006063#xpointer(/TEI%5B1%5D/text%5B1%5D/front%5B1%5D/div%5B1%5D/lg%5B1%5D/lg%5B1%5D)"></oac:hasTarget>
-                <oac:Annotation xmlns:oac="http://www.openannotation.org/ns/" rdf:resource="info:fedora/test:1000008729"></oac:Annotation>
+                <oa:hasBody xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000008728/datastreams/content/xml"></oa:hasBody>
+                <oa:hasTarget xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000006063#xpointer(/TEI%5B1%5D/text%5B1%5D/front%5B1%5D/div%5B1%5D/lg%5B1%5D/lg%5B1%5D)"></oa:hasTarget>
+                <oa:Annotation xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000008729"></oa:Annotation>
             </rdf:Description>
         </rdf:RDF>
         """

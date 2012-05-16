@@ -28,9 +28,9 @@ def annotate():
         annotated (T-1) and the object containing the annotation content (B-1) via RDF. 
         These relationships are stored in the Fedora Commons datastream RELS-EXT.
 
-        A-1 oac:hasBody B-1 
-        A-1 oac:hasTarget T-1# 
-        B-1 oac:annotates T-1
+        A-1 oa:hasBody B-1 
+        A-1 oa:hasTarget T-1# 
+        B-1 oa:annotates T-1
 
         Therefore Fedora object repo:1234 (T-1) is annotated by repo:1235 (A-1) and the
         body of the annotation (B-1) contains the annotation text.
