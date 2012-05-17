@@ -47,7 +47,8 @@ def annotate():
                 "dc_title"      : "Dublin Core Title",
                 "annotator"     : {'name' : "Some Person", 'email' : 'example@example.com'},
                 "generator"     : "Web client",
-                "model_version" : "1-Alpha"
+                "model_version" : "1-Alpha",
+                "type"          : "Amazing Annotation"
             }
         >>> encoded_data = urllib.urlencode( params )
         >>> request = urllib2.Request( post_url, encoded_data )
@@ -77,7 +78,8 @@ def annotate():
                             submitted = datetime.utcnow().replace(tzinfo=pytz.utc),
                             annotator = request.form['annotator'] or None,
                             generator = request.form['generator'] or None,
-                            model_version = request.form['model_version'])
+                            model_version = request.form['model_version'],
+                            type = request.form['type'])
         annote.build_body()
         annote.build_annotation()
         annote.submit()

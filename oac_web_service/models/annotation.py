@@ -16,6 +16,7 @@ class Annotation(object):
         self._annotator = kwargs.pop('annotator', None)
         self._generator = kwargs.pop('generator', None)
         self._model_version = kwargs.pop('model_version', None)
+        self._type = kwargs.pop('type', None)
 
 
         # Completed by create_body
@@ -49,7 +50,8 @@ class Annotation(object):
                                                 submitted=self._submitted,
                                                 annotator=self._annotator,
                                                 generator=self._generator,
-                                                model_version=self._model_version)
+                                                model_version=self._model_version,
+                                                type=self._type)
 
         dublin_core = Foxml.get_dublin_core_element(pid=self._annotation_pid, title=self._dc_title)
 

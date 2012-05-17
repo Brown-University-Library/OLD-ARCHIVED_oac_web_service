@@ -168,6 +168,13 @@ class Foxml(object):
             mv.text = model_version
             descrip.append(mv)
 
+        tpe = kwargs.pop('type', None)
+        if tpe is not None:
+            tp = Element("{%s}type" % cls.RDFNS)
+            tp.set("{%s}resource" % cls.RDFNS, "info:fedora/" + pid)
+            tp.text = tpe
+            descrip.append(tp)
+
         rdf = Element("{%s}RDF" % cls.RDFNS)
         rdf.append(descrip)
 
