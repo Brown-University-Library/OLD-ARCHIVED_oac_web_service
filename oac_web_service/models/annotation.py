@@ -25,14 +25,6 @@ class Annotation(object):
         self._errors = []
 
     def build_body(self):
-        """
-        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-            <rdf:Description rdf:about="info:fedora/test:1000008762">
-                <oa:Body xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000008762/datastreams/content/xml"></oa:Body>
-                <oa:Annotates xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000006063"></oa:Annotates>
-            </rdf:Description>
-        </rdf:RDF>
-        """
         self._body_pid = self.get_pid()
 
         rdf = Foxml.get_rdf_body_element(pid=self._body_pid, targets=self._targets)
@@ -49,15 +41,6 @@ class Annotation(object):
         self._body = foxml.get_foxml()
 
     def build_annotation(self):
-        """
-        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-            <rdf:Description rdf:about="info:fedora/test:1000008729">
-                <oa:hasBody xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000008728/datastreams/content/xml"></oa:hasBody>
-                <oa:hasTarget xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000006063#xpointer(/TEI%5B1%5D/text%5B1%5D/front%5B1%5D/div%5B1%5D/lg%5B1%5D/lg%5B1%5D)"></oa:hasTarget>
-                <oa:Annotation xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000008729"></oa:Annotation>
-            </rdf:Description>
-        </rdf:RDF>
-        """
         self._annotation_pid = self.get_pid()
 
         rdf = Foxml.get_rdf_annotation_element( pid=self._annotation_pid,
