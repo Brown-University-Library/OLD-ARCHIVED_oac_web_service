@@ -83,7 +83,9 @@ def annotate():
         annote.submit()
         annote.validate()
     except AnnotationError, ex:
-        return render_template('error.html', error=ex.value, trace=traceback.format_stack())
+        return jsonify({'value' : ex.value, 'trace' : traceback.format_stack()})
+    except Exception, ex:
+        raise
     else:
         # LOOK: https://github.com/mitsuhiko/flask/issues/478
         # return jsonify(annote.results), 201
