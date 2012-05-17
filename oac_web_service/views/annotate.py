@@ -1,6 +1,9 @@
 import sys
 import ast
 import traceback
+import pytz
+from datetime import datetime
+import simplejson as json
 from flask import render_template, request, jsonify
 from oac_web_service import app
 from oac_web_service.models.annotation import Annotation, AnnotationError
@@ -40,8 +43,11 @@ def annotate():
                     {'pid' : 'test:1', 'uri' : "test:1#xpointer('/foo')"},
                     {'pid' : 'test:2', 'uri' : "test:2#xpointer('/bar')"}
                 ],
-                "body_xml" : "<TEI><body>text body</body></TEI>",
-                "dc_title" : "Dublin Core Title"
+                "body_xml"      : "<TEI><body>text body</body></TEI>",
+                "dc_title"      : "Dublin Core Title",
+                "annotator"     : {'name' : "Some Person", 'email' : 'example@example.com'},
+                "generator"     : "Web client",
+                "model_version" : "1-Alpha"
             }
         >>> encoded_data = urllib.urlencode( params )
         >>> request = urllib2.Request( post_url, encoded_data )
@@ -67,7 +73,11 @@ def annotate():
     try:
         annote = Annotation(targets = ast.literal_eval(request.form['targets']),
                             body_xml = request.form['body_xml'],
-                            dc_title = request.form['dc_title'])
+                            dc_title = request.form['dc_title'],
+                            submitted = datetime.utcnow().replace(tzinfo=pytz.utc),
+                            annotator = request.form['annotator'] or None,
+                            generator = request.form['generator'] or None,
+                            model_version = request.form['model_version'])
         annote.build_body()
         annote.build_annotation()
         annote.submit()

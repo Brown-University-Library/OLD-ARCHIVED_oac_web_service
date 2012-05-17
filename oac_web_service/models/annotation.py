@@ -6,9 +6,18 @@ import urllib2
 
 class Annotation(object):
     def __init__(self, **kwargs):
+        # Required fields
         self._targets = kwargs.pop('targets')
         self._body_xml = kwargs.pop('body_xml')
         self._dc_title = kwargs.pop('dc_title')
+        self._submitted = kwargs.pop('submitted', None)
+
+        # Optional fields
+        self._annotator = kwargs.pop('annotator', None)
+        self._generator = kwargs.pop('generator', None)
+        self._model_version = kwargs.pop('model_version', None)
+
+
         # Completed by create_body
         self._body_pid = None
         self._body = None
@@ -51,7 +60,14 @@ class Annotation(object):
         """
         self._annotation_pid = self.get_pid()
 
-        rdf = Foxml.get_rdf_annotation_element(pid=self._annotation_pid, body_pid=self._body_pid, targets=self._targets)
+        rdf = Foxml.get_rdf_annotation_element( pid=self._annotation_pid,
+                                                body_pid=self._body_pid,
+                                                targets=self._targets,
+                                                submitted=self._submitted,
+                                                annotator=self._annotator,
+                                                generator=self._generator,
+                                                model_version=self._model_version)
+
         dublin_core = Foxml.get_dublin_core_element(pid=self._annotation_pid, title=self._dc_title)
 
         foxml = Foxml(pid=self._annotation_pid)

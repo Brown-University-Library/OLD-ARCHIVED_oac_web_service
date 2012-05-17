@@ -1,5 +1,7 @@
 from xml.etree import ElementTree as ET
 from xml.etree.ElementTree import Element
+from datetime import datetime
+import pytz
 
 class Foxml(object):
 
@@ -17,6 +19,9 @@ class Foxml(object):
 
     DC_NS = "http://purl.org/dc/elements/1.1/"
     ET._namespace_map[DC_NS] = 'dc'
+
+    FOAF_NS = "http://xmlns.com/foaf/0.1/"
+    ET._namespace_map[FOAF_NS] = 'foaf'
 
     STATE_INFO_URI = "info:fedora/fedora-system:def/model#state"
     LABEL_INFO_URI = "info:fedora/fedora-system:def/model#label"
@@ -99,12 +104,21 @@ class Foxml(object):
                 <oa:hasTarget xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000006063#xpointer(/TEI%5B1%5D/text%5B1%5D/front%5B1%5D/div%5B1%5D/lg%5B1%5D/lg%5B1%5D)"></oa:hasTarget>
                 <oa:hasTarget xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000006064#xpointer(/TEI%5B1%5D/text%5B1%5D/front%5B1%5D/div%5B1%5D/lg%5B1%5D/lg%5B1%5D)"></oa:hasTarget>
                 <oa:Annotation xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000008729"></oa:Annotation>
+                <oa:annotated xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000008729">2012-05-17T02:41:12.233000+00:00</oa:annotated>
+                <oa:generated xmlns:oa="http://www.w3.org/ns/openannotation/core/" rdf:resource="info:fedora/test:1000008729">2012-05-17T02:41:12.233000+00:00</oa:generated>
             </rdf:Description>
         </rdf:RDF>
         """
+        # Now
+        nw = datetime.utcnow().replace(tzinfo=pytz.utc)
+
+        # Required fields
         pid = kwargs.pop('pid')
         body_pid = kwargs.pop('body_pid')
         targets = kwargs.pop('targets')
+        submitted = kwargs.pop('submitted', nw)
+        if submitted is None:
+            submitted = nw
 
         descrip = Element("{%s}Description" % cls.RDFNS)
         descrip.set("{%s}about" % cls.RDFNS, "info:fedora/" + pid)
@@ -122,10 +136,66 @@ class Foxml(object):
         annotation.set("{%s}resource" % cls.RDFNS, "info:fedora/" + pid)
         descrip.append(annotation)
 
+        annotated = Element("{%s}annotated" % cls.OANS)
+        annotated.set("{%s}resource" % cls.RDFNS, "info:fedora/" + pid)
+        annotated.text = submitted.isoformat()
+        descrip.append(annotated)
+
+        generated = Element("{%s}generated" % cls.OANS)
+        generated.set("{%s}resource" % cls.RDFNS, "info:fedora/" + pid)
+        generated.text = nw.isoformat()
+        descrip.append(generated)
+
+        # Optional fields
+        annotator = kwargs.pop('annotator', None)
+        if annotator is not None:
+            anno = Element("{%s}annotator" % cls.OANS)
+            anno.set("{%s}resource" % cls.RDFNS, "info:fedora/" + pid)
+            anno.text = annotator
+            descrip.append(anno)
+
+        generator = kwargs.pop('generator', None)
+        if generator is not None:
+            gn = Element("{%s}generator" % cls.OANS)
+            gn.set("{%s}resource" % cls.RDFNS, "info:fedora/" + pid)
+            gn.text = generator
+            descrip.append(gn)
+
+        model_version = kwargs.pop('model_version', None)
+        if model_version is not None:
+            mv = Element("{%s}modelVersion" % cls.OANS)
+            mv.set("{%s}resource" % cls.RDFNS, "info:fedora/" + pid)
+            mv.text = model_version
+            descrip.append(mv)
+
         rdf = Element("{%s}RDF" % cls.RDFNS)
         rdf.append(descrip)
 
         return rdf
+
+    @classmethod
+    def build_foaf_agent(cls, **kwargs):
+        """
+        <foaf:Agent rdf:about="http://www.english.example.edu/people/facpages.asp?person_id=74">
+            <foaf:name>Richard D. Smith</foaf:name>
+            <foaf:mbox rdf:resource="mailto:rsmith@example.edu"/>
+        </foaf:Agent>
+        """
+        agent = kwargs.pop('agent')
+
+        fo = Element("{%s}Agent" % cls.FOAF_NS)
+
+        if agent['name'] is not None:
+            nm = Element("{%s}name" % cls.FOAF_NS)
+            nm.text = agent['name']
+            fo.append(nm)
+
+        if agent['email'] is not None:
+            mb = Element("{%s}mbox" % cls.FOAF_NS)
+            mb.set("{%s}resource" % cls.RDFNS, "mailto:" + agent['email'])
+            fo.append(mb)
+
+        return fo
 
     @classmethod
     def get_dublin_core_element(cls, **kwargs):
