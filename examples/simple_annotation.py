@@ -2,7 +2,7 @@
 
 import urllib
 import urllib2
-post_url = "http://localhost:5000/annotate"
+post_url = "http://daxdev.services.brown.edu:8081/oac_web_service/annotate"
 params = { 
     "source_uri"    : "test:1#xpointer('/foo')",
     "body_content"  : "<TEI><body>text body</body></TEI>",
