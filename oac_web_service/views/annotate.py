@@ -13,42 +13,48 @@ def annotate():
     """
         POST a new annotation with the following parameters:
 
-        targets:  list of targets (dictionaries) contianing the 'pid' and 'uri' of each target
-                  i.e. [{'pid' : 'test:1', 'uri' : "test:1#xpointer('/foo)"},{'pid' : 'test:2', 'uri' : "test:2#xpointer('/bar)"}]
+        Required Parameters:
 
-        body_xml: annotation in xml format, 
-                  i.e. <TEI><body>Some TEI text goes here.</body></TEI>
+        source_uri:             The URI for the whole target object
 
-        dc_title: Dublin Core title associated with the annotation, 
-                  i.e. "dublin core title goes here" 
+        dc_title:               Dublin Core title associated with the annotation, 
+                                i.e. "dublin core title goes here" 
 
-        Will create 2 Fedora objects.  One will represent the actual annotation (A-1)
+        body_content:           Contents of the body (XML, text, json, etc.)
+            AND
+        body_mimetype:          Mimetype of the body_content
+
+            OR
+
+        body_uri:               URI pointing to the body of the annotation
+
+
+        Optional Parameters:
+
+        annotator:              A string representing a user ID (0 or more)
+                                ie. 'Charly'
+
+        generator:              A string representing what generated the annotation
+                                ie. 'Web Client'
+
+        oax_style_uri:          A URI for a XSLT stylesheet used to render the whole target object. (0 or 1)
+
+        oa_selector:            A string with the selector value(0 or 1)
+
+        oa_selector_type_uri:   TBD (0 or 1)
+
+
+        Will create 1 or 2 Fedora objects.  One will represent the actual annotation (A-1)
         and one will be the body of text that annotates the Fedora object (B-1).
-        Therefore, the annotation object (A-1) will connect the Fedora object being 
-        annotated (T-1) and the object containing the annotation content (B-1) via RDF. 
-        These relationships are stored in the Fedora Commons datastream RELS-EXT.
-
-        A-1 oa:hasBody B-1 
-        A-1 oa:hasTarget T-1# 
-        B-1 oa:annotates T-1
-
-        Therefore Fedora object repo:1234 (T-1) is annotated by repo:1235 (A-1) and the
-        body of the annotation (B-1) contains the annotation text.
 
         >>> import urllib
         >>> import urllib2
-        >>> post_url = "http://127.0.0.1:5000/annotate"
+        >>> post_url = "http://localhost:5000/annotate"
         >>> params = { 
-                "targets" : [
-                    {'pid' : 'test:1', 'uri' : "test:1#xpointer('/foo')"},
-                    {'pid' : 'test:2', 'uri' : "test:2#xpointer('/bar')"}
-                ],
-                "body_xml"      : "<TEI><body>text body</body></TEI>",
-                "dc_title"      : "Dublin Core Title",
-                "annotator"     : {'name' : "Some Person", 'email' : 'example@example.com'},
-                "generator"     : "Web client",
-                "model_version" : "1-Alpha",
-                "type"          : "Amazing Annotation"
+                "source_uri"    : "test:1#xpointer('/foo')",
+                "body_content"  : "<TEI><body>text body</body></TEI>",
+                "body_mimetype" : "text/xml",
+                "dc_title"      : "Open Annotation Collaboration Annotation object (A-1)"
             }
         >>> encoded_data = urllib.urlencode( params )
         >>> request = urllib2.Request( post_url, encoded_data )
@@ -56,31 +62,24 @@ def annotate():
         >>> print response.read()
         {
           "errors": [],
-          "targets": [
-            {
-              "uri": "test:1#xpointer('/foo)",
-              "pid": "test:1"
-            },
-            {
-              "uri": "test:2#xpointer('/bar)",
-              "pid": "test:2"
-            }
-          ],
           "body_pid": "changeme:180",
           "annotation_pid": "changeme:181"
         }
     """
 
     try:
-        annote = Annotation(targets = ast.literal_eval(request.form['targets']),
-                            body_xml = request.form['body_xml'],
-                            dc_title = request.form['dc_title'],
+        annote = Annotation(source_uri = request.form.get('source_uri'),
+                            dc_title = request.form.get('dc_title'),
                             submitted = datetime.utcnow().replace(tzinfo=pytz.utc),
-                            annotator = request.form['annotator'] or None,
-                            generator = request.form['generator'] or None,
-                            model_version = request.form['model_version'],
-                            type = request.form['type'])
-        annote.build_body()
+                            body_content = request.form.get('body_content', None),
+                            body_mimetype = request.form.get('body_mimetype', None),
+                            body_uri = request.form.get('body_uri', None),
+                            annotator = request.form.get('annotator', None),
+                            generator = request.form.get('generator', None),
+                            oax_style_uri = request.form.get('oax_style_uri', None),
+                            oa_selector = request.form.get('oa_selector', None),
+                            oa_selector_type_uri = request.form.get('oa_selector_type_uri', None))
+
         annote.build_annotation()
         annote.submit()
         annote.validate()

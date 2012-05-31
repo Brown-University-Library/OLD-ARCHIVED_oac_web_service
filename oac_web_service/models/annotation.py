@@ -1,70 +1,88 @@
-import oac_web_service.fedora_settings as config
 from oac_web_service.models.foxml import Foxml
-from xml.etree import ElementTree as ET
-import base64
-import urllib2
+from oac_web_service.models.fedora import Fedora
 
 class Annotation(object):
     def __init__(self, **kwargs):
-        # Required fields
-        self._targets = kwargs.pop('targets')
-        self._body_xml = kwargs.pop('body_xml')
-        self._dc_title = kwargs.pop('dc_title')
-        self._submitted = kwargs.pop('submitted', None)
-
-        # Optional fields
-        self._annotator = kwargs.pop('annotator', None)
-        self._generator = kwargs.pop('generator', None)
-        self._model_version = kwargs.pop('model_version', None)
-        self._type = kwargs.pop('type', None)
-
-
-        # Completed by create_body
-        self._body_pid = None
         self._body = None
         self._annotation = None
         self._errors = []
+        self._body_mimetype = None
+
+        # Required fields
+        self._source_uri = kwargs.pop('source_uri')
+        self._dc_title = kwargs.pop('dc_title')
+        self._body_uri = kwargs.pop('body_uri', None)
+
+        if self._body_uri is None:
+            #try:
+            self._body_content = kwargs.pop('body_content')
+            self._body_mimetype = kwargs.pop('body_mimetype')
+            self.build_body()
+            assert self._body_uri is not None
+            #except:
+            #    raise AnnotationError("Could not create the (B-1) body object from passed parameters")
+
+        # Optional fields
+        self._submitted = kwargs.pop('submitted', None)
+        self._annotator = kwargs.pop('annotator', None)
+        self._generator = kwargs.pop('generator', None)
+        self._oax_style_uri = kwargs.pop('oax_style_uri', None)
+        self._oa_selector = kwargs.pop('oa_selector', None)
+        self._oa_selector_type_uri = kwargs.pop('oa_selector_type_uri', None)
 
     def build_body(self):
-        self._body_pid = self.get_pid()
-
-        rdf = Foxml.get_rdf_body_element(pid=self._body_pid, targets=self._targets)
-        dublin_core = Foxml.get_dublin_core_element(pid=self._body_pid, title="Open Annotation Collaboration body object (B-1)")
+        self._body_pid = Fedora.get_pid()
 
         foxml = Foxml(pid=self._body_pid)
         # Object Properties
         foxml.create_object_properties()
         # Dublin Core Datastream
+        dublin_core = Foxml.get_dublin_core_element(pid=self._body_pid, title="Open Annotation Collaboration body object (B-1)")
         foxml.create_dublin_core_datastream(dublin_core_element=dublin_core)
-        # Rels Ext Datastream
-        foxml.create_rels_ext_datastream(rdf_element=rdf)
+        # Attach body
+        foxml.create_body_content_datastream(body_mimetype=self._body_mimetype, body_content=self._body_content)
 
+        self._body_uri = "info:fedora/%s" % self._body_pid
         self._body = foxml.get_foxml()
 
     def build_annotation(self):
-        self._annotation_pid = self.get_pid()
-
-        rdf = Foxml.get_rdf_annotation_element( pid=self._annotation_pid,
-                                                body_pid=self._body_pid,
-                                                targets=self._targets,
-                                                submitted=self._submitted,
-                                                annotator=self._annotator,
-                                                generator=self._generator,
-                                                model_version=self._model_version,
-                                                type=self._type)
-
-        dublin_core = Foxml.get_dublin_core_element(pid=self._annotation_pid, title=self._dc_title)
+        self._annotation_pid = Fedora.get_pid()
 
         foxml = Foxml(pid=self._annotation_pid)
+        self._annotation_uri = "info:fedora/%s" % self._annotation_pid
+
         # Object Properties
         foxml.create_object_properties()
         # Dublin Core Datastream
-        foxml.create_dublin_core_datastream(dublin_core_element=dublin_core)
-        # Rels Ext Datastream
-        foxml.create_rels_ext_datastream(rdf_element=rdf)
+        dc_uri = "%s/DC" % self._annotation_uri
+        dublin_core = Foxml.get_dublin_core_element(pid=self._annotation_pid, title=self._dc_title)
+        foxml.create_dublin_core_datastream(dublin_core_element=dublin_core, fedora_uri=dc_uri)
+
+        # Annotation Datastream
+        anno_uri = "%s/annotation" % self._annotation_uri
+        annotation_rdf = Foxml.get_annotation_rdf_element(  pid=self._annotation_pid,
+                                                            body_uri=self._body_uri,
+                                                            oa_selector=self._oa_selector,
+                                                            body_mimetype=self._body_mimetype)
+        foxml.create_annotation_datastream(annotation_rdf_element=annotation_rdf, fedora_uri=anno_uri)
+        
+        if self._oa_selector is not None:
+            # SpecificTarget Datastream
+            sptg_uri = "%s/specifictarget" % self._annotation_uri
+            specific_target_rdf_element = Foxml.get_specific_target_rdf_element(pid=self._annotation_pid,
+                                                                                source_uri=self._source_uri,
+                                                                                oax_style_uri=self._oax_style_uri)
+            foxml.create_specific_target_datastream(specific_target_rdf_element=specific_target_rdf_element,
+                                                    fedora_uri=sptg_uri)
+
+            # Selector Datastream
+            sele_uri = "%s/selector" % self._annotation_uri
+            selector_rdf_element = Foxml.get_selector_rdf_element(  pid=self._annotation_pid,
+                                                                    oa_selector=self._oa_selector,
+                                                                    oa_selector_type_uri=self._oa_selector_type_uri)
+            foxml.create_selector_datastream(selector_rdf_element=selector_rdf_element, fedora_uri=sele_uri)
 
         self._annotation = foxml.get_foxml()
-        
 
     def validate(self):
         """
@@ -81,65 +99,18 @@ class Annotation(object):
             Send body and annotate objects to Fedora
         """
         if self._body:
-            self._body_response = self.post_foxml(element=self._body)
+            self._body_response = Fedora.post_foxml(element=self._body)
 
         if self._annotation:
-            self._annotation_response = self.post_foxml(element=self._annotation)
+            self._annotation_response = Fedora.post_foxml(element=self._annotation)
 
     def get_results(self):
         return  {
                     'errors'            : self._errors,
                     'body_pid'          : self._body_response,
-                    'annotation_pid'    : self._annotation_response,
-                    'targets'           : self._targets
+                    'annotation_pid'    : self._annotation_response
                 }
     results = property(get_results, None)
-
-    def post_foxml(self, **kwargs):
-        """
-            Post FOXML to the fedora repository, thus creating a new object
-        """
-        try:
-            username = config.FEDORA_USER
-            password = config.FEDORA_PASS
-            url = config.FEDORA_INGEST_URL
-            data = ET.tostring(kwargs.pop('element'))
-
-            request = urllib2.Request( url, data )
-
-            base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
-            request.add_header( "Authorization", "Basic %s" % base64_auth_string )
-            request.add_header( "Content-type", "text/xml" )
-            response = urllib2.urlopen( request )
-            return response.read()
-
-        except urllib2.HTTPError, e:
-            if e.code == 201:
-                return e.read()
-            else:
-                self._errors.append(e.read())
-                return False
-
-        except urllib2.URLError, e:
-            self._errors.append(e.reason)
-            return False
-
-    def get_pid(self):
-        """
-            Query the Fedora system for a PID
-        """
-        username = config.FEDORA_USER
-        password = config.FEDORA_PASS
-        url = config.FEDORA_PID_URL
-
-        request = urllib2.Request( url )
-
-        base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
-        request.add_header( "Authorization", "Basic %s" % base64_auth_string )
-        request.add_header( "Content-type", "text/xml" )
-        response = urllib2.urlopen( request )
-        element = ET.fromstring(response.read())
-        return element.find('pid').text
 
 class AnnotationError(Exception):
     def __init__(self, value):

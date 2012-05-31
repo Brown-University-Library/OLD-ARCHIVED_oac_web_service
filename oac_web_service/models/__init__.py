@@ -1,1 +1,1 @@
-from oac_web_service.models import annotation, foxml
+from oac_web_service.models import annotation, foxml, fedora
