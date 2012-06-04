@@ -3,24 +3,18 @@ from oac_web_service.models.fedora import Fedora
 
 class Annotation(object):
     def __init__(self, **kwargs):
-        self._body = None
-        self._annotation = None
         self._errors = []
-        self._body_mimetype = None
+
+        self._annotation_pid = kwargs.pop('annotation_pid', None)
 
         # Required fields
-        self._source_uri = kwargs.pop('source_uri')
-        self._dc_title = kwargs.pop('dc_title')
-        self._body_uri = kwargs.pop('body_uri', None)
+        self._source_uri = kwargs.pop('source_uri', None)
+        self._dc_title = kwargs.pop('dc_title', None)
 
-        if self._body_uri is None:
-            #try:
-            self._body_content = kwargs.pop('body_content')
-            self._body_mimetype = kwargs.pop('body_mimetype')
-            self.build_body()
-            assert self._body_uri is not None
-            #except:
-            #    raise AnnotationError("Could not create the (B-1) body object from passed parameters")
+        # Either a URI or a content/mimetype pair must be present
+        self._body_uri = kwargs.pop('body_uri', None)
+        self._body_content = kwargs.pop('body_content', None)
+        self._body_mimetype = kwargs.pop('body_mimetype', None)    
 
         # Optional fields
         self._annotated = kwargs.pop('annotated', None)
@@ -30,20 +24,62 @@ class Annotation(object):
         self._oa_selector = kwargs.pop('oa_selector', None)
         self._oa_selector_type_uri = kwargs.pop('oa_selector_type_uri', None)
 
-    def build_body(self):
-        self._body_pid = Fedora.get_pid()
+    def create(self):
+        if self._source_uri is None or self._dc_title is None:
+            raise AnnotationError("source_uri and dc_title are required for Creating")
 
-        foxml = Foxml(pid=self._body_pid)
-        # Object Properties
-        foxml.create_object_properties()
+        self._body = None
+        self._annotation = None
+        self.build_body()
+        assert self._body_uri is not None
+        self.build_annotation()
+
+
+    def serialize(self):
+        """
+        Get list of datastreams from a PID and pick out
+        'annotation', 'specifictarget', and 'selector'
+
+        With those, get all rdf:Description elements and output
+        """
+
+    def load(self):
+        """
+        Get an annotation object from Fedora (by PID) and load it locally as an
+        Annotation object.
+        """        
+
+    def edit(self):
+        if self._annotation_pid is None:
+            raise AnnotationError("pid is required for Editing")
+
         # Dublin Core Datastream
-        dublin_core = Foxml.get_dublin_core_element(pid=self._body_pid, title="Open Annotation Collaboration body object (B-1)")
-        foxml.create_dublin_core_datastream(dublin_core_element=dublin_core)
-        # Attach body
-        foxml.create_body_content_datastream(body_mimetype=self._body_mimetype, body_content=self._body_content)
+        if self._dc_title is not None:
+            dc_annotation = "DC"
+            dublin_core = Foxml.get_dublin_core_element(pid=self._annotation_pid, title=self._dc_title)
+            Fedora.put_datastream(pid=self._annotation_pid, dsid=dc_annotation, element=dubln_core)
 
-        self._body_uri = "info:fedora/%s" % self._body_pid
-        self._body = foxml.get_foxml()
+    def build_body(self):
+        if self._body_uri is None:
+            try:
+                assert self._body_content is not None
+                assert self._body_mimetype is not None
+
+                self._body_pid = Fedora.get_pid()
+
+                foxml = Foxml(pid=self._body_pid)
+                # Object Properties
+                foxml.create_object_properties()
+                # Dublin Core Datastream
+                dublin_core = Foxml.get_dublin_core_element(pid=self._body_pid, title="Open Annotation Collaboration body object (B-1)")
+                foxml.create_dublin_core_datastream(dublin_core_element=dublin_core)
+                # Attach body
+                foxml.create_body_content_datastream(body_mimetype=self._body_mimetype, body_content=self._body_content)
+
+                self._body_uri = "info:fedora/%s" % self._body_pid
+                self._body = foxml.get_foxml()
+            except:
+                raise AnnotationError("Could not create the (B-1) body object from passed parameters")
 
     def build_annotation(self):
         self._annotation_pid = Fedora.get_pid()

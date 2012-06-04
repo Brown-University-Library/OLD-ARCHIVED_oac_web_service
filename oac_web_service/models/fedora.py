@@ -37,6 +37,41 @@ class Fedora(object):
             return False
 
     @classmethod
+    def put_datastream(cls, **kwargs):
+        """
+            Put an XML datastream object to the fedora repository, thus editing it
+        """
+
+        pid = kwargs.pop('pid')
+        dsid = kwargs.pop('dsid')
+
+        try:
+            username = config.FEDORA_USER
+            password = config.FEDORA_PASS
+            url = config.FEDORA_UPDATE_URL.replace('{pid}', pid).replace('{dsid}', dsid)
+            data = ET.tostring(kwargs.pop('element'))
+
+            request = urllib2.Request( url, data )
+
+            base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
+            request.add_header( "Authorization", "Basic %s" % base64_auth_string )
+            request.add_header( "Content-type", "text/xml" )
+            request.get_method = lambda: 'PUT'
+            response = urllib2.urlopen( request )
+            return response.read()
+
+        except urllib2.HTTPError, e:
+            if e.code == 200:
+                return e.read()
+            else:
+                self._errors.append(e.read())
+                return False
+
+        except urllib2.URLError, e:
+            self._errors.append(e.reason)
+            return False
+
+    @classmethod
     def get_pid(cls):
         """
             Query the Fedora system for a PID

@@ -8,8 +8,8 @@ from flask import render_template, request, jsonify
 from oac_web_service import app
 from oac_web_service.models.annotation import Annotation, AnnotationError
 
-@app.route('/annotate', methods=['POST'])
-def annotate():
+@app.route('/create', methods=['POST'])
+def create():
     """
         POST a new annotation with the following parameters:
 
@@ -49,7 +49,7 @@ def annotate():
 
         >>> import urllib
         >>> import urllib2
-        >>> post_url = "http://localhost:5000/annotate"
+        >>> post_url = "http://localhost:5000/create"
         >>> params = { 
                 "source_uri"    : "test:1#xpointer('/foo')",
                 "body_content"  : "<TEI><body>text body</body></TEI>",
@@ -79,8 +79,8 @@ def annotate():
                             oax_style_uri = request.form.get('oax_style_uri', None),
                             oa_selector = request.form.get('oa_selector', None),
                             oa_selector_type_uri = request.form.get('oa_selector_type_uri', None))
-
-        annote.build_annotation()
+        
+        annote.create()
         annote.submit()
         annote.validate()
     except AnnotationError, ex:
