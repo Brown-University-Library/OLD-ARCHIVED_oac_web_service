@@ -80,13 +80,13 @@ class Foxml(object):
         <rdf:RDF>
           <rdf:Description rdf:about="info:fedora/{{ANNO1_PID}}">
             <rdf:type rdf:resource="oa:Annotation"/>
-            <oa:hasBody rdf:resource="{{body_uri}}"/>
+            <oa:hasBody rdf:resource="{{BODY_URI}}"/>
             <!-- if a oa_selector is passed as a parameter, include: -->
             <oa:hasTarget rdf:resource="info:fedora/{{ANNO1_PID}}/SpecificTarget"/>
             <!-- Always include: -->
             <oa:modelVersion rdf:resource="http://www.openannotation.org/spec/core/20120509.html"/>
           </rdf:Description>
-          <rdf:Description rdf:about="info:fedora/{{ANNO1_PID}}">
+          <rdf:Description rdf:about="{{BODY_URI}}">
             <rdf:type rdf:resource="oa:Body"/>
             <dc:format>{{body_content_mimetype}}</dc:format>
           </rdf:Description>
@@ -126,7 +126,7 @@ class Foxml(object):
 
         # RDF oa:Body Description Element
         descrip_body = Element("{%s}Description" % cls.RDFNS)
-        descrip_body.set("{%s}about" % cls.RDFNS, "info:fedora/" + annotation_pid)
+        descrip_body.set("{%s}about" % cls.RDFNS, body_uri)
 
         body_type = Element("{%s}type" % cls.RDFNS)
         body_type.set("{%s}resource" % cls.RDFNS, "oa:Body")
@@ -342,7 +342,7 @@ class Foxml(object):
                   <!-- Always include: -->
                   <oa:modelVersion rdf:resource="http://www.openannotation.org/spec/core/20120509.html"/>
                 </rdf:Description>
-                <rdf:Description rdf:about="{{ANNO1_PID}}">
+                <rdf:Description rdf:about="{{BODY_URI}}">
                   <rdf:type rdf:resource="oa:Body"/>
                   <dc:format>{{body_content_mimetype}}</dc:format>
                 </rdf:Description>

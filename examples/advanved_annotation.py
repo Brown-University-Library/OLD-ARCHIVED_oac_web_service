@@ -80,7 +80,7 @@ ANNOTATION:
             <oa:modelVersion rdf:resource="http://www.openannotation.org/spec/core/20120509.html"/>
             <oa:hasTarget rdf:resource="info:fedora/changeme:308/SpecificTarget"/>
           </rdf:Description>
-          <rdf:Description rdf:about="info:fedora/changeme:308">
+          <rdf:Description rdf:about="info:fedora/changeme:307">
             <rdf:type rdf:resource="oa:Body"/>
             <dc:format>text/xml</dc:format>
           </rdf:Description>
