@@ -76,9 +76,9 @@ ANNOTATION:
         <rdf:RDF>
           <rdf:Description rdf:about="info:fedora/changeme:308">
             <rdf:type rdf:resource="oa:Annotation"/>
-            <oax:hasBody rdf:resource="info:fedora/changeme:307"/>
-            <oax:modelVersion rdf:resource="http://www.openannotation.org/spec/core/20120509.html"/>
-            <oax:hasTarget rdf:resource="info:fedora/changeme:308/SpecificTarget"/>
+            <oa:hasBody rdf:resource="info:fedora/changeme:307"/>
+            <oa:modelVersion rdf:resource="http://www.openannotation.org/spec/core/20120509.html"/>
+            <oa:hasTarget rdf:resource="info:fedora/changeme:308/SpecificTarget"/>
           </rdf:Description>
           <rdf:Description rdf:about="info:fedora/changeme:308">
             <rdf:type rdf:resource="oa:Body"/>
@@ -94,8 +94,8 @@ ANNOTATION:
         <rdf:RDF>
           <rdf:Description rdf:about="info:fedora/changeme:308/SpecificTarget">
             <rdf:type rdf:resource="oa:SpecificResource"/>
-            <oax:hasSource rdf:resource="test:1#xpointer('/foo')"/>
-            <oax:hasSelector rdf:resource="info:fedora/changeme:308/selector"/>
+            <oa:hasSource rdf:resource="test:1#xpointer('/foo')"/>
+            <oa:hasSelector rdf:resource="info:fedora/changeme:308/selector"/>
           </rdf:Description>
         </rdf:RDF>
       </foxml:xmlContent>

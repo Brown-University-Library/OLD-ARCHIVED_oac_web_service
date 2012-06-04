@@ -15,7 +15,7 @@ class Foxml(object):
     ET._namespace_map[OANS] = 'oa'
 
     OAXNS = "http://www.w3.org/ns/openannotation/extension/"
-    ET._namespace_map[OANS] = 'oax'
+    ET._namespace_map[OAXNS] = 'oax'
 
     OAI_DC_NS = "http://www.openarchives.org/OAI/2.0/oai_dc/"
     ET._namespace_map[OAI_DC_NS] = 'oai_dc'

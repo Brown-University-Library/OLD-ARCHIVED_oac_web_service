@@ -74,8 +74,8 @@ ANNOTATION:
         <rdf:RDF>
           <rdf:Description rdf:about="info:fedora/changeme:300">
             <rdf:type rdf:resource="oa:Annotation"/>
-            <oax:hasBody rdf:resource="info:fedora/changeme:299"/>
-            <oax:modelVersion rdf:resource="http://www.openannotation.org/spec/core/20120509.html"/>
+            <oa:hasBody rdf:resource="info:fedora/changeme:299"/>
+            <oa:modelVersion rdf:resource="http://www.openannotation.org/spec/core/20120509.html"/>
           </rdf:Description>
           <rdf:Description rdf:about="info:fedora/changeme:300">
             <rdf:type rdf:resource="oa:Body"/>
