@@ -70,7 +70,7 @@ def annotate():
     try:
         annote = Annotation(source_uri = request.form.get('source_uri'),
                             dc_title = request.form.get('dc_title'),
-                            submitted = datetime.utcnow().replace(tzinfo=pytz.utc),
+                            annotated = datetime.utcnow(),
                             body_content = request.form.get('body_content', None),
                             body_mimetype = request.form.get('body_mimetype', None),
                             body_uri = request.form.get('body_uri', None),

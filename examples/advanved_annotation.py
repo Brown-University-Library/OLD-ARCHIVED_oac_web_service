@@ -9,7 +9,9 @@ params = {
     "body_mimetype"         : "text/xml",
     "dc_title"              : "Open Annotation Collaboration Annotation object (A-1)",
     "oa_selector"           : "/for/example/an/xpath/statement",
-    "oa_selector_type_uri"  : "oa:Fragment"
+    "oa_selector_type_uri"  : "oa:Fragment",
+    "annotator"             : "Gilbert",
+    "generator"             : "Web Client"
 }
 encoded_data = urllib.urlencode( params )
 request = urllib2.Request( post_url, encoded_data )
@@ -79,6 +81,10 @@ ANNOTATION:
             <oa:hasBody rdf:resource="info:fedora/changeme:307"/>
             <oa:modelVersion rdf:resource="http://www.openannotation.org/spec/core/20120509.html"/>
             <oa:hasTarget rdf:resource="info:fedora/changeme:308/SpecificTarget"/>
+            <oa:generated>2012-06-04T02:33:58.910000Z</oa:generated>
+            <oa:annotated>2012-06-04T02:33:58.671999Z</oa:annotated>
+            <oa:generator>Web Client</oa:generator>
+            <oa:annotator>Gilbert</oa:annotator>
           </rdf:Description>
           <rdf:Description rdf:about="info:fedora/changeme:307">
             <rdf:type rdf:resource="oa:Body"/>

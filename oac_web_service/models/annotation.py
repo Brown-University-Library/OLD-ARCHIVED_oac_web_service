@@ -23,7 +23,7 @@ class Annotation(object):
             #    raise AnnotationError("Could not create the (B-1) body object from passed parameters")
 
         # Optional fields
-        self._submitted = kwargs.pop('submitted', None)
+        self._annotated = kwargs.pop('annotated', None)
         self._annotator = kwargs.pop('annotator', None)
         self._generator = kwargs.pop('generator', None)
         self._oax_style_uri = kwargs.pop('oax_style_uri', None)
@@ -60,10 +60,14 @@ class Annotation(object):
 
         # Annotation Datastream
         anno_uri = "%s/annotation" % self._annotation_uri
-        annotation_rdf = Foxml.get_annotation_rdf_element(  pid=self._annotation_pid,
-                                                            body_uri=self._body_uri,
-                                                            oa_selector=self._oa_selector,
-                                                            body_mimetype=self._body_mimetype)
+        annotation_rdf = Foxml.get_annotation_rdf_element(pid=self._annotation_pid,
+                                                          body_uri=self._body_uri,
+                                                          oa_selector=self._oa_selector,
+                                                          body_mimetype=self._body_mimetype,
+                                                          annotated=self._annotated,
+                                                          generator=self._generator,
+                                                          annotator=self._annotator)
+    
         foxml.create_annotation_datastream(annotation_rdf_element=annotation_rdf, fedora_uri=anno_uri)
         
         if self._oa_selector is not None:

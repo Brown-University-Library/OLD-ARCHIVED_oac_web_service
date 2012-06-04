@@ -83,8 +83,15 @@ class Foxml(object):
             <oa:hasBody rdf:resource="{{BODY_URI}}"/>
             <!-- if a oa_selector is passed as a parameter, include: -->
             <oa:hasTarget rdf:resource="info:fedora/{{ANNO1_PID}}/SpecificTarget"/>
+            <!--Optional provenance parameters-->
+            <oa:annotator>{{annotator}}</oa:annotator>
+            <oa:generator>{{generator}}</oa:generator> 
+            <!--POST only-->
+            <oa:annotated>{{datetime}}</oa:annotated>
+            <!--End optional provenance parameters -->
             <!-- Always include: -->
             <oa:modelVersion rdf:resource="http://www.openannotation.org/spec/core/20120509.html"/>
+            <oa:annotated>{{datetime}}</oa:annotated>
           </rdf:Description>
           <rdf:Description rdf:about="{{BODY_URI}}">
             <rdf:type rdf:resource="oa:Body"/>
@@ -98,6 +105,10 @@ class Foxml(object):
 
         # Optional fields
         oa_selector = kwargs.pop('oa_selector', None)
+        annotated = kwargs.pop('annotated', None)
+        generator = kwargs.pop('generator', None)
+        annotator = kwargs.pop('annotator', None)
+
         # TODO: If we didn't create a new BODY (B-1) object, how do we know the 
         # content type here?  We would need to query the existing BODY object before
         # calling this function
@@ -119,10 +130,30 @@ class Foxml(object):
         mv.set("{%s}resource" % cls.RDFNS, "http://www.openannotation.org/spec/core/20120509.html")
         descrip_annotation.append(mv)
 
+        # Always update the "generated", POST or PUT
+        gn = Element("{%s}generated" % cls.OANS)
+        gn.text = "%sZ" % datetime.utcnow().isoformat()
+        descrip_annotation.append(gn)
+
         if oa_selector is not None:
             t = Element("{%s}hasTarget" % cls.OANS)
             t.set("{%s}resource" % cls.RDFNS, "info:fedora/" + annotation_pid + "/SpecificTarget")
             descrip_annotation.append(t)
+
+        # Optionals
+        if annotated is not None:
+            an = Element("{%s}annotated" % cls.OANS)
+            an.text = "%sZ" % annotated.isoformat()
+            descrip_annotation.append(an)
+        if generator is not None:
+            gnr = Element("{%s}generator" % cls.OANS)
+            gnr.text = generator
+            descrip_annotation.append(gnr)
+        if annotator is not None:
+            anr = Element("{%s}annotator" % cls.OANS)
+            anr.text = annotator
+            descrip_annotation.append(anr)
+
 
         # RDF oa:Body Description Element
         descrip_body = Element("{%s}Description" % cls.RDFNS)
@@ -137,34 +168,6 @@ class Foxml(object):
             body_mime.text = body_content_mimetype
             descrip_body.append(body_mime)
 
-        """
-        nw = datetime.utcnow().replace(tzinfo=pytz.utc)
-        generated = Element("{%s}generated" % cls.OANS)
-        generated.set("{%s}resource" % cls.RDFNS, "info:fedora/" + annotation_pid)
-        generated.text = nw.isoformat()
-        descrip.append(generated)
-        
-        submitted = kwargs.pop('submitted')
-        if submitted is not None:
-            annotated = Element("{%s}annotated" % cls.OANS)
-            annotated.set("{%s}resource" % cls.RDFNS, "info:fedora/" + annotation_pid)
-            annotated.text = submitted.isoformat()
-            descrip.append(annotated)
-
-        annotator = kwargs.pop('annotator', None)
-        if annotator is not None:
-            anno = Element("{%s}annotator" % cls.OANS)
-            anno.set("{%s}resource" % cls.RDFNS, "info:fedora/" + annotation_pid)
-            anno.text = annotator
-            descrip.append(anno)
-
-        generator = kwargs.pop('generator', None)
-        if generator is not None:
-            gn = Element("{%s}generator" % cls.OANS)
-            gn.set("{%s}resource" % cls.RDFNS, "info:fedora/" + annotation_pid)
-            gn.text = generator
-            descrip.append(gn)
-        """
 
         rdf = Element("{%s}RDF" % cls.RDFNS)
         rdf.append(descrip_annotation)
