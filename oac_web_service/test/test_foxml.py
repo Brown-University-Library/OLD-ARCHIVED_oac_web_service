@@ -13,7 +13,7 @@ class FoxmlTest(unittest.TestCase):
                     """
         op = Foxml.get_object_properties()
 
-    def text_rdf_annotation_element(self):
+    def test_rdf_annotation_element(self):
         should_be = """ 
                     <rdf:RDF>
                         <rdf:Description rdf:about="info:fedora/1">
