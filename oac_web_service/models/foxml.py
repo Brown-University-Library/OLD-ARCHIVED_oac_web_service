@@ -329,7 +329,7 @@ class Foxml(object):
     def get_annotation_datastream(cls, **kwargs):
         """
         <foxml:datastream ID="annotation" FEDORA_URI="info:fedora/{{ANNO1_PID}}/annotation" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
-          <foxml:datastreamVersion ID="annotation.0" LABEL="" CREATED="2012-05-23T13:54:31.203Z" MIMETYPE="text/xml" SIZE="809">
+          <foxml:datastreamVersion ID="annotation.0" LABEL="" CREATED="2012-05-23T13:54:31.203Z" MIMETYPE="application/rdf+xml" SIZE="809">
             <foxml:contentDigest TYPE="MD5" DIGEST="48e7b0c1ecedfccb443f6f693a894dc6"/>
             <foxml:xmlContent>
               <rdf:RDF>
@@ -354,7 +354,7 @@ class Foxml(object):
         xml_content = Foxml.get_xml_content_element()
         xml_content.append(kwargs.pop('annotation_rdf_element'))
 
-        datastream_version = Foxml.get_datastream_version_element(id="annotation.0", mime="text/xml", label="")
+        datastream_version = Foxml.get_datastream_version_element(id="annotation.0", mime="application/rdf+xml", label="")
         datastream_version.append(xml_content)
 
         datastream = Foxml.get_datastream_element(id="annotation", state="A", control_group="M", fedora_uri=kwargs.pop('fedora_uri', None))
