@@ -22,7 +22,7 @@ class FoxmlTest(unittest.TestCase):
                             <oa:hasTarget rdf:resource="info:fedora/1/SpecificTarget"/>
                             <oa:modelVersion rdf:resource="http://www.openannotation.org/spec/core/20120509.html"/>
                         </rdf:Description>
-                        <rdf:Description rdf:about="info:fedora/1">
+                        <rdf:Description rdf:about="body:2">
                             <rdf:type rdf:resource="oa:Body"/>
                             <dc:format>text/xml</dc:format>
                         </rdf:Description>
@@ -72,6 +72,10 @@ class FoxmlTest(unittest.TestCase):
                               <oa:hasBody rdf:resource="body:1"/>
                               <oa:hasTarget rdf:resource="info:fedora/1/SpecificTarget"/>
                               <oa:modelVersion rdf:resource="http://www.openannotation.org/spec/core/20120509.html"/>
+                              <oa:generated>{{datetime}}</oa:generated>
+                              <oa:annotator>Mac</oa:annotator>
+                              <oa:generator>Web</oa:generator>
+                              <oa:annotated>{{datetime}}</oa:annotated>
                             </rdf:Description>
                             <rdf:Description rdf:about="1">
                               <rdf:type rdf:resource="oa:Body"/>
@@ -85,7 +89,9 @@ class FoxmlTest(unittest.TestCase):
         ele = Foxml.get_annotation_rdf_element(pid='1',
                                                body_uri='body:1',
                                                oa_selector='/my/xpath',
-                                               body_mimetype='text/xml')
+                                               body_mimetype='text/xml',
+                                               annotator='Mac',
+                                               generator='Web')
         ds = Foxml.get_annotation_datastream(annotation_rdf_element=ele,
                                              fedora_uri='info:fedora/1/annotation')
 
