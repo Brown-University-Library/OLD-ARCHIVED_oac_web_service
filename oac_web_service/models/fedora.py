@@ -29,11 +29,9 @@ class Fedora(object):
             if e.code == 201:
                 return e.read()
             else:
-                self._errors.append(e.read())
                 return False
 
         except urllib2.URLError, e:
-            self._errors.append(e.reason)
             return False
 
     @classmethod
@@ -48,7 +46,7 @@ class Fedora(object):
         try:
             username = config.FEDORA_USER
             password = config.FEDORA_PASS
-            url = config.FEDORA_UPDATE_URL.replace('{pid}', pid).replace('{dsid}', dsid)
+            url = config.FEDORA_UPDATE_DATASTREAM_URL.replace('{pid}', pid).replace('{dsid}', dsid)
             data = ET.tostring(kwargs.pop('element'))
 
             request = urllib2.Request( url, data )
@@ -64,12 +62,62 @@ class Fedora(object):
             if e.code == 200:
                 return e.read()
             else:
-                self._errors.append(e.read())
                 return False
 
         except urllib2.URLError, e:
-            self._errors.append(e.reason)
             return False
+
+    @classmethod
+    def get_datastream(cls, pid, dsid):
+        """
+            Get a datastreams XML representation
+        """
+        try: 
+            username = config.FEDORA_USER
+            password = config.FEDORA_PASS
+            url = config.FEDORA_GET_DATASTREAM_URL.replace('{pid}', pid).replace('{dsid}', dsid)
+
+            request = urllib2.Request( url )
+
+            base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
+            request.add_header( "Authorization", "Basic %s" % base64_auth_string )
+            response = urllib2.urlopen( request )
+
+            # Parse out and return Datastream IDs
+            return ET.fromstring(response.read())
+
+        except urllib2.HTTPError, e:
+            if e.code == 404:
+                return "No object with the PID %s and DSID %s" % (pid, dsid)
+            else:
+                return e.read()
+
+    @classmethod
+    def get_datastream_list(cls, pid):
+        """
+            Get a list of datastream IDs from a PID
+        """
+        try:
+            username = config.FEDORA_USER
+            password = config.FEDORA_PASS
+            url = config.FEDORA_LIST_DATASTREAMS_URL.replace('{pid}', pid)
+            url += "?format=xml"
+
+            request = urllib2.Request( url )
+
+            base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
+            request.add_header( "Authorization", "Basic %s" % base64_auth_string )
+            response = urllib2.urlopen( request )
+
+            # Parse out and return Datastream IDs
+            element = ET.fromstring(response.read())
+            return [e.get('dsid') for e in element.findall('datastream')]
+
+        except urllib2.HTTPError, e:
+            if e.code == 404:
+                return "No object with the PID %s" % pid
+            else:
+                return e.read()
 
     @classmethod
     def get_pid(cls):

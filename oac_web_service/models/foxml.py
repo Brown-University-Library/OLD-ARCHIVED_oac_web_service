@@ -1,6 +1,7 @@
 from xml.etree import ElementTree as ET
 from xml.etree.ElementTree import Element
 from datetime import datetime
+from oac_web_service.utils import *
 import pytz
 
 class Foxml(object):
@@ -22,6 +23,9 @@ class Foxml(object):
 
     DC_NS = "http://purl.org/dc/elements/1.1/"
     ET._namespace_map[DC_NS] = 'dc'
+
+    CNT_NS = "http://www.w3.org/2011/content#"
+    ET._namespace_map[CNT_NS] = 'cnt'
 
     STATE_INFO_URI = "info:fedora/fedora-system:def/model#state"
     LABEL_INFO_URI = "info:fedora/fedora-system:def/model#label"
@@ -436,3 +440,21 @@ class Foxml(object):
         datastream = Foxml.get_datastream_element(id="OAC_BODY", state="A", control_group="M")
         datastream.append(datastream_version)
         return datastream
+
+    @classmethod
+    def get_rdf_descriptions(cls, element):
+        return element.findall("{%s}Description" % cls.RDFNS)
+
+    @classmethod
+    def get_rdf_string_from_descriptions(cls, elements):
+
+        rdf = Element("{%s}RDF" % cls.RDFNS)
+        rdf.set('xmlns:oa', cls.OANS)
+        rdf.set('xmlns:oax', cls.OAXNS)
+        rdf.set('xmlns:cnt', cls.CNT_NS)
+        rdf.set('xmlns:dc', cls.DC_NS)
+
+        [rdf.append(d) for d in elements]
+        #cleanup_namespaces(rdf,ET._namespace_map)
+        indent(rdf)
+        return ET.tostring(rdf)

@@ -34,14 +34,26 @@ class Annotation(object):
         assert self._body_uri is not None
         self.build_annotation()
 
-
-    def serialize(self):
+    @classmethod
+    def serialize(cls, pid):
         """
         Get list of datastreams from a PID and pick out
         'annotation', 'specifictarget', and 'selector'
 
         With those, get all rdf:Description elements and output
         """
+        datastreams = Fedora.get_datastream_list(pid)
+
+        # Error messages
+        if not isinstance(datastreams, list):
+            return datastreams
+
+        xmls = []
+        for d in datastreams:
+            rdf_ds = Fedora.get_datastream(pid, d)
+            [xmls.append(x) for x in Foxml.get_rdf_descriptions(rdf_ds)]
+
+        return Foxml.get_rdf_string_from_descriptions(xmls)
 
     def load(self):
         """
