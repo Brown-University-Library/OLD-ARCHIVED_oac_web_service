@@ -361,7 +361,7 @@ class Foxml(object):
         xml_content = Foxml.get_xml_content_element()
         xml_content.append(kwargs.pop('annotation_rdf_element'))
 
-        datastream_version = Foxml.get_datastream_version_element(id="annotation.0", mime="application/rdf+xml", label="")
+        datastream_version = Foxml.get_datastream_version_element(id="annotation.0", mime="application/rdf+xml", label="OAC annotation core")
         datastream_version.append(xml_content)
 
         datastream = Foxml.get_datastream_element(id="annotation", state="A", control_group="M", fedora_uri=kwargs.pop('fedora_uri', None))
