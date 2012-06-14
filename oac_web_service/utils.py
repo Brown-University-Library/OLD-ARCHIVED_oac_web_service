@@ -13,7 +13,7 @@ def indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
 
-def cleanup_namespaces(element, nsmap):
+def cleanup_namespaces(element):
     for elem in element.getiterator():
         for key, value in elem.items():
             if key[:6] == "xmlns:":
