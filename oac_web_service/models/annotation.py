@@ -30,7 +30,7 @@ class Annotation(object):
 
         self._body = None
         self._annotation = None
-        self.build_body()
+        self.build_body() 
         assert self._body_uri is not None
         self.build_annotation()
 
@@ -108,15 +108,15 @@ class Annotation(object):
 
         # Annotation Datastream
         anno_uri = "%s/annotation" % self._annotation_uri
-        annotation_rdf = Foxml.get_annotation_rdf_element(pid=self._annotation_pid,
-                                                          body_uri=self._body_uri,
-                                                          oa_selector=self._oa_selector,
-                                                          body_mimetype=self._body_mimetype,
-                                                          annotated=self._annotated,
-                                                          generator=self._generator,
-                                                          annotator=self._annotator)
+        self.annotation_rdf = Foxml.get_annotation_rdf_element(pid=self._annotation_pid,
+                                                               body_uri=self._body_uri,
+                                                               oa_selector=self._oa_selector,
+                                                               body_mimetype=self._body_mimetype,
+                                                               annotated=self._annotated,
+                                                               generator=self._generator,
+                                                               annotator=self._annotator)
     
-        foxml.create_annotation_datastream(annotation_rdf_element=annotation_rdf, fedora_uri=anno_uri)
+        foxml.create_annotation_datastream(annotation_rdf_element=self.annotation_rdf, fedora_uri=anno_uri)
         
         if self._oa_selector is not None:
             # SpecificTarget Datastream

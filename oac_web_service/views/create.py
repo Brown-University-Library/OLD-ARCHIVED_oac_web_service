@@ -5,8 +5,11 @@ import pytz
 from datetime import datetime
 import simplejson as json
 from flask import render_template, request, jsonify
-from oac_web_service import app
+from oac_web_service import app, dataset
 from oac_web_service.models.annotation import Annotation, AnnotationError
+from xml.etree.ElementTree import tostring
+from java.io import ByteArrayInputStream
+from java.lang import String
 
 @app.route('/create', methods=['POST'])
 def create():
@@ -82,7 +85,16 @@ def create():
         
         annote.create()
         annote.submit()
-        annote.validate()
+        if annote.validate():
+            rdfxml = String(tostring(annote.annotation_rdf))
+            input_stream = ByteArrayInputStream(rdfxml.getBytes())
+            model = dataset.getDefaultModel()
+            model.begin()
+            model.read(input_stream, None)
+            model.commit()
+            model.close()
+            input_stream.close()
+
     except AnnotationError, ex:
         return jsonify({'value' : ex.value, 'trace' : traceback.format_stack()})
     except Exception, ex:
