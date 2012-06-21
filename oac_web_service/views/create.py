@@ -1,15 +1,15 @@
 import sys
-import ast
 import traceback
-import pytz
 from datetime import datetime
-import simplejson as json
-from flask import render_template, request, jsonify
-from oac_web_service import app, dataset
+from flask import request, jsonify
+from oac_web_service import app, db_path
 from oac_web_service.models.annotation import Annotation, AnnotationError
 from xml.etree.ElementTree import tostring
 from java.io import ByteArrayInputStream
 from java.lang import String
+from com.hp.hpl.jena.tdb import TDBFactory
+from com.hp.hpl.jena.tdb import TDB
+from com.hp.hpl.jena.query import ReadWrite
 
 @app.route('/create', methods=['POST'])
 def create():
@@ -88,13 +88,24 @@ def create():
         if annote.validate():
             rdfxml = String(tostring(annote.annotation_rdf))
             input_stream = ByteArrayInputStream(rdfxml.getBytes())
-            model = dataset.getDefaultModel()
-            model.begin()
-            model.read(input_stream, None)
-            model.commit()
-            model.close()
-            input_stream.close()
 
+            # Start dataset transaction
+            dataset = TDBFactory.createDataset(db_path)
+            dataset.begin(ReadWrite.WRITE)
+            try:
+                model = dataset.getDefaultModel()
+                model.begin()
+                model.read(input_stream, None)
+                model.commit()
+                model.close()
+                dataset.commit() 
+            except Exception, exc:
+                raise
+            finally:
+                input_stream.close()
+                dataset.end()
+                TDB.sync(dataset)
+            
     except AnnotationError, ex:
         return jsonify({'value' : ex.value, 'trace' : traceback.format_stack()})
     except Exception, ex:
