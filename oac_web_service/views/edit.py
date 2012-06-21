@@ -1,10 +1,5 @@
-import sys
-import ast
 import traceback
-import pytz
-from datetime import datetime
-import simplejson as json
-from flask import render_template, request, jsonify
+from flask import request, jsonify
 from oac_web_service import app
 from oac_web_service.models.annotation import Annotation, AnnotationError
 

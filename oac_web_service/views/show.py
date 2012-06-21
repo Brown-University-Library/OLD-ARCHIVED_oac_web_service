@@ -1,4 +1,4 @@
-from flask import render_template, request, make_response
+from flask import request, make_response
 from oac_web_service import app
 from oac_web_service.models.annotation import Annotation, AnnotationError
 
