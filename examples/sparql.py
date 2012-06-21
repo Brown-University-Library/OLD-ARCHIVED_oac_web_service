@@ -5,20 +5,15 @@ import urllib2
 import httplib2
 httplib2.debuglevel=5
 
-#url = "http://daxdev.services.brown.edu:8081/oac_web_service/sparql"
-url = "http://localhost:8080/oac_web_service/sparql"
-#url = "http://localhost:5000/sparql"
+url = "http://daxdev.services.brown.edu:8081/oac_web_service/sparql"
 
 """
-Test queries:
-
 "SELECT (count(*) AS ?count) { ?s ?p ?o }"
 "SELECT * { ?s ?p ?o }"
 """
-query = "SELECT (count(*) AS ?count) { ?s ?p ?o }"
-params = {
-    'query' : query
-}
+query = "SELECT * { ?s ?p ?o }"
+
+params = { 'query' : query }
 encoded_data = urllib.urlencode( params )
 
 # urllib2 POST
