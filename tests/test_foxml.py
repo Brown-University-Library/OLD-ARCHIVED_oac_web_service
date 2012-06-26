@@ -159,3 +159,26 @@ class FoxmlTest(unittest.TestCase):
                                         id="OAC_BODY",
                                         label="OAC Body Content",
                                         mime='text/xml')
+
+    def test_rels_ext_model_datastream(cls, **kwargs):
+        should_be = """
+                    <foxml:datastream ID="RELS-EXT" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+                        <foxml:datastreamVersion ID="RELS-EXT.0" LABEL="RDF Statements about this object" MIMETYPE="application/rdf+xml" FORMAT_URI="info:fedora/fedora-system:FedoraRELSExt-1.0">
+                            <foxml:xmlContent>
+                                <rdf:RDF>
+                                    <rdf:Description rdf:about="info:fedora/1">
+                                        <fedora-model:hasModel rdf:resource="info:fedora/bdr-cmodel:tei-annotation"/>
+                                    </rdf:Description>
+                                </rdf:RDF>
+                            </foxml:xmlContent>
+                        </foxml:datastreamVersion>
+                    </foxml:datastream>
+                    """
+        ele = Foxml.get_rels_ext_model_element(pid='1',
+                                               model='tei-annotation')
+
+        ds = Foxml.get_xml_datastream(element=ele,
+                                      id="RELS_EXT",
+                                      mime="application/rdf+xml",
+                                      label="RDF Statements about this object",
+                                      format_uri="info:fedora/fedora-system:FedoraRELSExt-1.0")

@@ -11,7 +11,8 @@ params = {
     "oa_selector"           : "/for/example/an/xpath/statement",
     "oa_selector_type_uri"  : "oa:Fragment",
     "annotator"             : "Gilbert",
-    "generator"             : "Web Client"
+    "generator"             : "Web Client",
+    "body_content_model"    : "tei-annotation"
 }
 encoded_data = urllib.urlencode( params )
 request = urllib2.Request( post_url, encoded_data )

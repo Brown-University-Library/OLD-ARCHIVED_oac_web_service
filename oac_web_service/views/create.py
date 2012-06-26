@@ -45,6 +45,9 @@ def create():
 
         oa_selector_type_uri:   TBD (0 or 1)
 
+        body_content_model:     A string representing the body's content model
+                                ie. 'tei-annotation'
+
 
         Will create 1 or 2 Fedora objects.  One will represent the actual annotation (A-1)
         and one will be the body of text that annotates the Fedora object (B-1).
@@ -76,6 +79,7 @@ def create():
                             body_content = request.form.get('body_content', None),
                             body_mimetype = request.form.get('body_mimetype', None),
                             body_uri = request.form.get('body_uri', None),
+                            body_content_model = request.form.get('body_content_model', None),
                             annotator = request.form.get('annotator', None),
                             generator = request.form.get('generator', None),
                             oax_style_uri = request.form.get('oax_style_uri', None),
@@ -103,6 +107,10 @@ def create():
                     selector_input_stream = ByteArrayInputStream(String(tostring(annote.selector_rdf_element)).getBytes())
                     model.read(selector_input_stream, None)
                     selector_input_stream.close()
+                if annote.rels_ext_rdf_element is not None:
+                    relsext_input_stream = ByteArrayInputStream(String(tostring(annote.rels_ext_rdf_element)).getBytes())
+                    model.read(relsext_input_stream, None)
+                    relsext_input_stream.close()
                 model.commit()
                 model.close()
                 dataset.commit() 

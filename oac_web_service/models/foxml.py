@@ -27,8 +27,11 @@ class Foxml(object):
     CNT_NS = "http://www.w3.org/2011/content#"
     ET._namespace_map[CNT_NS] = 'cnt'
 
-    STATE_INFO_URI = "info:fedora/fedora-system:def/model#state"
-    LABEL_INFO_URI = "info:fedora/fedora-system:def/model#label"
+    FEDORA_MODEL_NS = "info:fedora/fedora-system:def/model#"
+    ET._namespace_map[FEDORA_MODEL_NS] = "fedora-model"
+
+    STATE_INFO_URI = "%sstate" % FEDORA_MODEL_NS
+    LABEL_INFO_URI = "%slabel" % FEDORA_MODEL_NS
     RELSEXT_INFO_URI = "info:fedora/fedora-system:FedoraRELSExt-1.0";
 
     def __init__(self, **kwargs):
@@ -71,6 +74,31 @@ class Foxml(object):
         objectProperties.append(labelProperty);
         
         return objectProperties;
+
+    @classmethod
+    def get_rels_ext_model_element(cls, **kwargs):
+        """
+        <rdf:RDF>
+            <rdf:Description rdf:about="info:fedora/{{PID}}">
+                <fedora-model:hasModelrdf resource="info:fedora/bdr-cmodel:{{MODEL}}"/>
+            </rdf:Description>
+        </rdf:RDF>
+        """
+        pid = kwargs.pop('pid')
+        model = kwargs.pop('model')
+
+        descrip = Element("{%s}Description" % cls.RDFNS)
+        descrip.set("{%s}about" % cls.RDFNS, "info:fedora/" + pid)
+
+        md = Element("{%s}hasModel" % cls.FEDORA_MODEL_NS)
+        md.set("{%s}resource" % cls.RDFNS, "info:fedora/bdr-cmodel:" + model)
+        descrip.append(md)
+
+        rdf = Element("{%s}RDF" % cls.RDFNS)
+        rdf.append(descrip)
+
+        return rdf
+
 
     @classmethod
     def get_annotation_rdf_element(cls, **kwargs):

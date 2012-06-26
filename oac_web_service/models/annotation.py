@@ -14,7 +14,8 @@ class Annotation(object):
         # Either a URI or a content/mimetype pair must be present
         self._body_uri = kwargs.pop('body_uri', None)
         self._body_content = kwargs.pop('body_content', None)
-        self._body_mimetype = kwargs.pop('body_mimetype', None)    
+        self._body_mimetype = kwargs.pop('body_mimetype', None)
+        self._body_content_model = kwargs.pop('body_content_model', None)
 
         # Optional fields
         self._annotated = kwargs.pop('annotated', None)
@@ -90,7 +91,6 @@ class Annotation(object):
                                             mime="text/xml",
                                             label="Dublin Core Record for this object")
                 # Attach body
-
                 if self._body_mimetype == "text/xml":
                     foxml.create_xml_datastream(element=self._body_content,
                                                 id="OAC_BODY",
@@ -99,6 +99,16 @@ class Annotation(object):
                 else:
                     raise AnnotationError("Only body contents with mimetype 'text/xml' is allowed at this time.")
 
+                # Optional RELS-EXT Datastream for the content model
+                if self._body_content_model is not None:
+                    body_rels_ext_rdf_element = Foxml.get_rels_ext_model_element(pid=self._body_pid,
+                                                                                 model=self._body_content_model)
+                    foxml.create_xml_datastream(element=body_rels_ext_rdf_element,
+                                                id="RELS_EXT",
+                                                mime="application/rdf+xml",
+                                                label="RDF Statements about this object",
+                                                format_uri="info:fedora/fedora-system:FedoraRELSExt-1.0")
+                    
                 self._body_uri = "info:fedora/%s" % self._body_pid
                 self._body = foxml.get_foxml()
             except:
@@ -132,13 +142,22 @@ class Annotation(object):
                                                                annotated=self._annotated,
                                                                generator=self._generator,
                                                                annotator=self._annotator)
-    
         foxml.create_xml_datastream(element=self.annotation_rdf,
                                     id="annotation",
                                     mime="application/rdf+xml",
                                     label="OAC annotation core",
                                     fedora_uri=anno_uri)
-            
+
+
+        # RELS-EXT Datastream
+        self.rels_ext_rdf_element = Foxml.get_rels_ext_model_element(pid=self._annotation_pid,
+                                                                     model='oa-annotation')
+        foxml.create_xml_datastream(element=self.rels_ext_rdf_element,
+                                    id="RELS_EXT",
+                                    mime="application/rdf+xml",
+                                    label="RDF Statements about this object",
+                                    format_uri="info:fedora/fedora-system:FedoraRELSExt-1.0")
+
         self.specific_target_rdf_element = None
         self.selector_rdf_element = None
         if self._oa_selector is not None:
