@@ -84,14 +84,25 @@ class Annotation(object):
                 foxml.create_object_properties()
                 # Dublin Core Datastream
                 dublin_core = Foxml.get_dublin_core_element(pid=self._body_pid, title="Open Annotation Collaboration body object (B-1)")
-                foxml.create_dublin_core_datastream(dublin_core_element=dublin_core)
+                foxml.create_xml_datastream(element=dublin_core,
+                                            id="DC",
+                                            version_id="DC1",
+                                            mime="text/xml",
+                                            label="Dublin Core Record for this object")
                 # Attach body
-                foxml.create_body_content_datastream(body_mimetype=self._body_mimetype, body_content=self._body_content)
+
+                if self._body_mimetype == "text/xml":
+                    foxml.create_xml_datastream(element=self._body_content,
+                                                id="OAC_BODY",
+                                                label="OAC Body Content",
+                                                mime=self._body_mimetype)
+                else:
+                    raise AnnotationError("Only body contents with mimetype 'text/xml' is allowed at this time.")
 
                 self._body_uri = "info:fedora/%s" % self._body_pid
                 self._body = foxml.get_foxml()
             except:
-                raise AnnotationError("Could not create the (B-1) body object from passed parameters")
+                raise# AnnotationError("Could not create the (B-1) body object from passed parameters")
 
     def build_annotation(self):
         self._annotation_pid = Fedora.get_pid()
@@ -104,7 +115,13 @@ class Annotation(object):
         # Dublin Core Datastream
         dc_uri = "%s/DC" % self._annotation_uri
         dublin_core = Foxml.get_dublin_core_element(pid=self._annotation_pid, title=self._dc_title)
-        foxml.create_dublin_core_datastream(dublin_core_element=dublin_core, fedora_uri=dc_uri)
+        foxml.create_xml_datastream(element=dublin_core,
+                                    id="DC",
+                                    version_id="DC1",
+                                    mime="text/xml",
+                                    label="Dublin Core Record for this object",
+                                    fedora_uri=dc_uri,
+                                    format_uri="http://www.openarchives.org/OAI/2.0/oai_dc/")
 
         # Annotation Datastream
         anno_uri = "%s/annotation" % self._annotation_uri
@@ -116,25 +133,36 @@ class Annotation(object):
                                                                generator=self._generator,
                                                                annotator=self._annotator)
     
-        foxml.create_annotation_datastream(annotation_rdf_element=self.annotation_rdf, fedora_uri=anno_uri)
-        
+        foxml.create_xml_datastream(element=self.annotation_rdf,
+                                    id="annotation",
+                                    mime="application/rdf+xml",
+                                    label="OAC annotation core",
+                                    fedora_uri=anno_uri)
+            
         self.specific_target_rdf_element = None
         self.selector_rdf_element = None
         if self._oa_selector is not None:
             # SpecificTarget Datastream
             sptg_uri = "%s/specifictarget" % self._annotation_uri
             self.specific_target_rdf_element = Foxml.get_specific_target_rdf_element(pid=self._annotation_pid,
-                                                                                source_uri=self._source_uri,
-                                                                                oax_style_uri=self._oax_style_uri)
-            foxml.create_specific_target_datastream(specific_target_rdf_element=specific_target_rdf_element,
-                                                    fedora_uri=sptg_uri)
+                                                                                     source_uri=self._source_uri,
+                                                                                     oax_style_uri=self._oax_style_uri)
+            foxml.create_xml_datastream(element=self.specific_target_rdf_element,
+                                        id="specifictarget",
+                                        mime="application/rdf+xml",
+                                        label="SpecificTarget data for OAC annotation",
+                                        fedora_uri=sptg_uri)
 
             # Selector Datastream
             sele_uri = "%s/selector" % self._annotation_uri
             self.selector_rdf_element = Foxml.get_selector_rdf_element(pid=self._annotation_pid,
-                                                                    oa_selector=self._oa_selector,
-                                                                    oa_selector_type_uri=self._oa_selector_type_uri)
-            foxml.create_selector_datastream(selector_rdf_element=selector_rdf_element, fedora_uri=sele_uri)
+                                                                       oa_selector=self._oa_selector,
+                                                                       oa_selector_type_uri=self._oa_selector_type_uri)
+            foxml.create_xml_datastream(element=self.selector_rdf_element,
+                                        id="selector",
+                                        mime="application/rdf+xml",
+                                        label="Selector data for OAC annotation",
+                                        fedora_uri=sele_uri)
 
         self._annotation = foxml.get_foxml()
 

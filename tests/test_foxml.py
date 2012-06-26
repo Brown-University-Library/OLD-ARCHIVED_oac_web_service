@@ -57,9 +57,13 @@ class FoxmlTest(unittest.TestCase):
                     """
         ele = Foxml.get_dublin_core_element(pid='1',
                                             title="super!")
-        ds = Foxml.get_dublin_core_datastream(dublin_core_element=ele,
-                                              fedora_uri="info:fedora/1/DC")
-        dump(ds)
+        ds = Foxml.get_xml_datastream(element=ele,
+                                      id="DC",
+                                      version_id="DC1",
+                                      mime="text/xml",
+                                      label="Dublin Core Record for this object",
+                                      fedora_uri="info:fedora/1/DC",
+                                      format_uri="http://www.openarchives.org/OAI/2.0/oai_dc/")
 
     def test_annotation_datastream(self):
         should_be = """
@@ -92,8 +96,11 @@ class FoxmlTest(unittest.TestCase):
                                                body_mimetype='text/xml',
                                                annotator='Mac',
                                                generator='Web')
-        ds = Foxml.get_annotation_datastream(annotation_rdf_element=ele,
-                                             fedora_uri='info:fedora/1/annotation')
+        ds = Foxml.get_xml_datastream(element=ele,
+                                      id="annotation",
+                                      mime="application/rdf+xml",
+                                      label="OAC annotation core",
+                                      fedora_uri='info:fedora/1/annotation')
 
     def test_specific_target_datastream(self):
         should_be = """
@@ -116,8 +123,11 @@ class FoxmlTest(unittest.TestCase):
         ele = Foxml.get_specific_target_rdf_element(pid='1',
                                                     source_uri='source:2',
                                                     oax_style_uri='style:3')
-        ds = Foxml.get_specific_target_datastream(specific_target_rdf_element=ele,
-                                                  fedora_uri='info:fedora/1/specifictarget')
+        ds = Foxml.get_xml_datastream(element=ele,
+                                      id="specifictarget",
+                                      mime="application/rdf+xml",
+                                      label="SpecificTarget data for OAC annotation",
+                                      fedora_uri='info:fedora/1/specifictarget')
 
     def test_selector_datastream(self):
         should_be = """
@@ -137,9 +147,15 @@ class FoxmlTest(unittest.TestCase):
         ele = Foxml.get_selector_rdf_element(pid='1',
                                              oa_selector='/my/xpath/',
                                              oa_selector_type_uri='oa:FragmentSelector')
-        ds = Foxml.get_selector_datastream(selector_rdf_element=ele,
-                                           fedora_uri='info:fedora/1/selector')
-
+        ds = Foxml.get_xml_datastream(element=ele,
+                                      id="selector",
+                                      mime="application/rdf+xml",
+                                      label="Selector data for OAC annotation",
+                                      fedora_uri='info:fedora/1/selector')
+                                           
     def test_xml_body_content_datastream(self):
         body_string = "<TEI><body>Some TEI text goes here.</body></TEI>"
-        body = Foxml.get_xml_body_content_datastream(body_content=body_string, body_mimetype='text/xml')
+        body = Foxml.get_xml_datastream(element=body_string,
+                                        id="OAC_BODY",
+                                        label="OAC Body Content",
+                                        mime='text/xml')
