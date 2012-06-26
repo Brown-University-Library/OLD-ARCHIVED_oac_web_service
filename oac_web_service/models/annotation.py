@@ -118,10 +118,12 @@ class Annotation(object):
     
         foxml.create_annotation_datastream(annotation_rdf_element=self.annotation_rdf, fedora_uri=anno_uri)
         
+        self.specific_target_rdf_element = None
+        self.selector_rdf_element = None
         if self._oa_selector is not None:
             # SpecificTarget Datastream
             sptg_uri = "%s/specifictarget" % self._annotation_uri
-            specific_target_rdf_element = Foxml.get_specific_target_rdf_element(pid=self._annotation_pid,
+            self.specific_target_rdf_element = Foxml.get_specific_target_rdf_element(pid=self._annotation_pid,
                                                                                 source_uri=self._source_uri,
                                                                                 oax_style_uri=self._oax_style_uri)
             foxml.create_specific_target_datastream(specific_target_rdf_element=specific_target_rdf_element,
@@ -129,7 +131,7 @@ class Annotation(object):
 
             # Selector Datastream
             sele_uri = "%s/selector" % self._annotation_uri
-            selector_rdf_element = Foxml.get_selector_rdf_element(  pid=self._annotation_pid,
+            self.selector_rdf_element = Foxml.get_selector_rdf_element(pid=self._annotation_pid,
                                                                     oa_selector=self._oa_selector,
                                                                     oa_selector_type_uri=self._oa_selector_type_uri)
             foxml.create_selector_datastream(selector_rdf_element=selector_rdf_element, fedora_uri=sele_uri)

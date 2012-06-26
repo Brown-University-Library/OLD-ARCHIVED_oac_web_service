@@ -85,23 +85,30 @@ def create():
         annote.create()
         annote.submit()
         if annote.validate():
-            rdfxml = String(tostring(annote.annotation_rdf))
-            input_stream = ByteArrayInputStream(rdfxml.getBytes())
-
             # Start dataset transaction
             dataset = TDBFactory.createDataset(db_path)
             dataset.begin(ReadWrite.WRITE)
             try:
                 model = dataset.getDefaultModel()
                 model.begin()
-                model.read(input_stream, None)
+                if annote.annotation_rdf is not None:
+                    anno_input_stream = ByteArrayInputStream(String(tostring(annote.annotation_rdf)).getBytes())
+                    model.read(anno_input_stream, None)
+                    anno_input_stream.close()
+                if annote.specific_target_rdf_element is not None:
+                    spectaget_input_stream = ByteArrayInputStream(String(tostring(annote.specific_target_rdf_element)).getBytes())
+                    model.read(spectaget_input_stream, None)
+                    spectaget_input_stream.close()
+                if annote.selector_rdf_element is not None:
+                    selector_input_stream = ByteArrayInputStream(String(tostring(annote.selector_rdf_element)).getBytes())
+                    model.read(selector_input_stream, None)
+                    selector_input_stream.close()
                 model.commit()
                 model.close()
                 dataset.commit() 
             except Exception, exc:
                 raise
             finally:
-                input_stream.close()
                 dataset.end()
                 TDB.sync(dataset)
             
