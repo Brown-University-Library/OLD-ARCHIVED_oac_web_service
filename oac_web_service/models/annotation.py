@@ -1,5 +1,6 @@
 from oac_web_service.models.foxml import Foxml
 from oac_web_service.models.fedora import Fedora
+from oac_web_service import app
 
 class Annotation(object):
     def __init__(self, **kwargs):
@@ -16,7 +17,7 @@ class Annotation(object):
         self._body_content = kwargs.pop('body_content', None)
         self._body_mimetype = kwargs.pop('body_mimetype', None)
         self._body_content_model = kwargs.pop('body_content_model', None)
-
+        
         # Optional fields
         self._annotated = kwargs.pop('annotated', None)
         self._annotator = kwargs.pop('annotator', None)
@@ -150,8 +151,11 @@ class Annotation(object):
 
 
         # RELS-EXT Datastream
+        # This 'get' should never fall back to '' because there is a default annotation content model ('oac:oa-annotation')
+        model = app.config.get('DEFUALT_ANNOTATION_CONTENT_MODEL', '')
+
         self.rels_ext_rdf_element = Foxml.get_rels_ext_model_element(pid=self._annotation_pid,
-                                                                     model='oa-annotation')
+                                                                     model=model)
         foxml.create_xml_datastream(element=self.rels_ext_rdf_element,
                                     id="RELS-EXT",
                                     mime="application/rdf+xml",

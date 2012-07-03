@@ -3,6 +3,10 @@ app = Flask(__name__)
 app.config.from_object('oac_web_service.fedora_settings')
 app.config.from_envvar('FEDORA_SETTINGS', silent=True)
 
+# Set a default Annotation content model if one was not set in the settings files
+if app.config.get('DEFUALT_ANNOTATION_CONTENT_MODEL', None) is None:
+	app.config['DEFUALT_ANNOTATION_CONTENT_MODEL'] = 'oac:oa-annotation'
+
 import os
 
 # Logging
