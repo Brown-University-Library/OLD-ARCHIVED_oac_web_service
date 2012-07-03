@@ -80,7 +80,7 @@ class Foxml(object):
         """
         <rdf:RDF>
             <rdf:Description rdf:about="info:fedora/{{PID}}">
-                <fedora-model:hasModelrdf resource="info:fedora/bdr-cmodel:{{MODEL}}"/>
+                <fedora-model:hasModel rdf:resource="info:fedora/bdr-cmodel:{{MODEL}}"/>
             </rdf:Description>
         </rdf:RDF>
         """
