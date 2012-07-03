@@ -44,7 +44,7 @@ class Fedora(object):
         dsid = kwargs.pop('dsid')
 
         try:
-            url = app.config['FEDORA_UPDATE_DATASTREAM_URL'].replace('{pid}', pid).replace('{dsid}', dsid)
+            url = app.config['FEDORA_DATASTREAM_URL'].replace('{pid}', pid).replace('{dsid}', dsid)
             data = ET.tostring(kwargs.pop('element'))
 
             request = urllib2.Request( url, data )
@@ -79,7 +79,7 @@ class Fedora(object):
             request.add_header( "Authorization", "Basic %s" % base64_auth_string )
             response = urllib2.urlopen( request )
 
-            # Parse out and return Datastream IDs
+            # Parse out and return Datastream XML
             return ET.fromstring(response.read())
 
         except urllib2.HTTPError, e:
@@ -105,7 +105,7 @@ class Fedora(object):
 
             # Parse out and return Datastream IDs
             element = ET.fromstring(response.read())
-            return [e.get('dsid') for e in element.findall('datastream')]
+            return [e.get('dsid') for e in element.findall('{http://www.fedora.info/definitions/1/0/access/}datastream')]
 
         except urllib2.HTTPError, e:
             if e.code == 404:

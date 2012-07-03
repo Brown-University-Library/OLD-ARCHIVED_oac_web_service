@@ -14,9 +14,7 @@ FEDORA_INGEST_URL = "%s:%s%s" % (FEDORA_HOST, FEDORA_PORT, ingest_path)
 list_path = "/fedora/objects/{pid}/datastreams"
 FEDORA_LIST_DATASTREAMS_URL = "%s:%s%s" % (FEDORA_HOST, FEDORA_PORT, list_path)
 
-get_path = "/fedora/get/{pid}/{dsid}"
-FEDORA_GET_DATASTREAM_URL = "%s:%s%s" % (FEDORA_HOST, FEDORA_PORT, get_path)
-
 ds_path = "%s/{dsid}" % list_path
-FEDORA_UPDATE_DATASTREAM_URL = "%s:%s%s" % (FEDORA_HOST, FEDORA_PORT, ds_path)
+FEDORA_DATASTREAM_URL = "%s:%s%s" % (FEDORA_HOST, FEDORA_PORT, ds_path)
+FEDORA_GET_DATASTREAM_URL = "%s:%s%s/content" % (FEDORA_HOST, FEDORA_PORT, ds_path)
 
