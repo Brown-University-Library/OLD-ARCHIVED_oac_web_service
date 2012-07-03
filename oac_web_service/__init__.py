@@ -9,15 +9,6 @@ if app.config.get('DEFUALT_ANNOTATION_CONTENT_MODEL', None) is None:
 
 import os
 
-# Logging
-if not app.debug:
-    import logging
-    from logging import FileHandler
-    logfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'oac.log')
-    file_handler = FileHandler(logfile)
-    file_handler.setLevel(logging.WARNING)
-    app.logger.addHandler(file_handler)
-
 # Create path to persistant index
 db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'OAC.tdb')
 
