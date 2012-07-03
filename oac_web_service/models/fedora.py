@@ -1,8 +1,10 @@
 import base64
 import urllib2
-from oac_web_service import fedora_settings as config
+from oac_web_service import app
 from xml.etree import ElementTree as ET
 
+username = app.config['FEDORA_USER']
+password = app.config['FEDORA_PASS']
 
 class Fedora(object):
 
@@ -12,9 +14,7 @@ class Fedora(object):
             Post FOXML to the fedora repository, thus creating a new object
         """
         try:
-            username = config.FEDORA_USER
-            password = config.FEDORA_PASS
-            url = config.FEDORA_INGEST_URL
+            url = app.config['FEDORA_INGEST_URL']
             data = ET.tostring(kwargs.pop('element'))
 
             request = urllib2.Request( url, data )
@@ -44,9 +44,7 @@ class Fedora(object):
         dsid = kwargs.pop('dsid')
 
         try:
-            username = config.FEDORA_USER
-            password = config.FEDORA_PASS
-            url = config.FEDORA_UPDATE_DATASTREAM_URL.replace('{pid}', pid).replace('{dsid}', dsid)
+            url = app.config['FEDORA_UPDATE_DATASTREAM_URL'].replace('{pid}', pid).replace('{dsid}', dsid)
             data = ET.tostring(kwargs.pop('element'))
 
             request = urllib2.Request( url, data )
@@ -73,9 +71,7 @@ class Fedora(object):
             Get a datastreams XML representation
         """
         try: 
-            username = config.FEDORA_USER
-            password = config.FEDORA_PASS
-            url = config.FEDORA_GET_DATASTREAM_URL.replace('{pid}', pid).replace('{dsid}', dsid)
+            url = app.config['FEDORA_GET_DATASTREAM_URL'].replace('{pid}', pid).replace('{dsid}', dsid)
 
             request = urllib2.Request( url )
 
@@ -98,9 +94,7 @@ class Fedora(object):
             Get a list of datastream IDs from a PID
         """
         try:
-            username = config.FEDORA_USER
-            password = config.FEDORA_PASS
-            url = config.FEDORA_LIST_DATASTREAMS_URL.replace('{pid}', pid)
+            url = app.config['FEDORA_LIST_DATASTREAMS_URL'].replace('{pid}', pid)
             url += "?format=xml"
 
             request = urllib2.Request( url )
@@ -124,9 +118,7 @@ class Fedora(object):
         """
             Query the Fedora system for a PID
         """
-        username = config.FEDORA_USER
-        password = config.FEDORA_PASS
-        url = config.FEDORA_PID_URL
+        url = app.config['FEDORA_PID_URL']
 
         request = urllib2.Request( url )
 
