@@ -12,7 +12,7 @@ params = {
     "oa_selector_type_uri"  : "oa:Fragment",
     "annotator"             : "Gilbert",
     "generator"             : "Web Client",
-    "body_content_model"    : "tei-annotation"
+    "body_content_model"    : "bdr-cmodel:tei-annotation"
 }
 encoded_data = urllib.urlencode( params )
 request = urllib2.Request( post_url, encoded_data )

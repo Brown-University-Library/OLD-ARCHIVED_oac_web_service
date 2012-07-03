@@ -80,7 +80,7 @@ class Foxml(object):
         """
         <rdf:RDF>
             <rdf:Description rdf:about="info:fedora/{{PID}}">
-                <fedora-model:hasModel rdf:resource="info:fedora/bdr-cmodel:{{MODEL}}"/>
+                <fedora-model:hasModel rdf:resource="info:fedora/{{MODEL}}"/>
             </rdf:Description>
         </rdf:RDF>
         """
@@ -91,7 +91,7 @@ class Foxml(object):
         descrip.set("{%s}about" % cls.RDFNS, "info:fedora/" + pid)
 
         md = Element("{%s}hasModel" % cls.FEDORA_MODEL_NS)
-        md.set("{%s}resource" % cls.RDFNS, "info:fedora/bdr-cmodel:" + model)
+        md.set("{%s}resource" % cls.RDFNS, "info:fedora/" + model)
         descrip.append(md)
 
         rdf = Element("{%s}RDF" % cls.RDFNS)
