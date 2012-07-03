@@ -104,7 +104,7 @@ class Annotation(object):
                     body_rels_ext_rdf_element = Foxml.get_rels_ext_model_element(pid=self._body_pid,
                                                                                  model=self._body_content_model)
                     foxml.create_xml_datastream(element=body_rels_ext_rdf_element,
-                                                id="RELS_EXT",
+                                                id="RELS-EXT",
                                                 mime="application/rdf+xml",
                                                 label="RDF Statements about this object",
                                                 format_uri="info:fedora/fedora-system:FedoraRELSExt-1.0")

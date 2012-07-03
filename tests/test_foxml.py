@@ -178,7 +178,7 @@ class FoxmlTest(unittest.TestCase):
                                                model='tei-annotation')
 
         ds = Foxml.get_xml_datastream(element=ele,
-                                      id="RELS_EXT",
+                                      id="RELS-EXT",
                                       mime="application/rdf+xml",
                                       label="RDF Statements about this object",
                                       format_uri="info:fedora/fedora-system:FedoraRELSExt-1.0")
