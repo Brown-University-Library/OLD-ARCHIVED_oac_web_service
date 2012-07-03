@@ -5,7 +5,7 @@ FEDORA_PASS = ""
 
 DEFUALT_ANNOTATION_CONTENT_MODEL = "bdr-cmodel:oa-annotation"
 
-pid_path = "/fedora/management/getNextPID?xml=true"
+pid_path = "/fedora/objects/nextPID"
 FEDORA_PID_URL = "%s:%s%s" % (FEDORA_HOST, FEDORA_PORT, pid_path)
 
 ingest_path = "/fedora/objects/new"

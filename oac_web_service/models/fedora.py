@@ -1,5 +1,5 @@
 import base64
-import urllib2
+import urllib2, urllib
 from oac_web_service import app
 from xml.etree import ElementTree as ET
 
@@ -119,12 +119,15 @@ class Fedora(object):
             Query the Fedora system for a PID
         """
         url = app.config['FEDORA_PID_URL']
-
-        request = urllib2.Request( url )
+        params = { 
+          "format"  : "xml"
+        }
+        encoded_data = urllib.urlencode( params )
+        request = urllib2.Request( url, encoded_data )
 
         base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
         request.add_header( "Authorization", "Basic %s" % base64_auth_string )
         request.add_header( "Content-type", "text/xml" )
         response = urllib2.urlopen( request )
         element = ET.fromstring(response.read())
-        return element.find('pid').text
+        return element.find('{http://www.fedora.info/definitions/1/0/management/}pid').text
