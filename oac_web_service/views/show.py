@@ -15,8 +15,6 @@ def show():
             - turtle or ttl
             - nt
             - n3
-            
-
     """
     try:
         pid = request.args.get('pid')

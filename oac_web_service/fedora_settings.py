@@ -3,6 +3,11 @@ FEDORA_PORT = ""
 FEDORA_USER = ""
 FEDORA_PASS = ""
 
+# The Username and Password to access the OAC services
+# that manipulate data.
+OAC_USER = ""
+OAC_PASS = ""
+
 DEFUALT_ANNOTATION_CONTENT_MODEL = "bdr-cmodel:oa-annotation"
 
 pid_path = "/fedora/objects/nextPID"

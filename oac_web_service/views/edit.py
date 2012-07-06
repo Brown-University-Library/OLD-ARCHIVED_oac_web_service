@@ -2,8 +2,10 @@ import traceback
 from flask import request, jsonify
 from oac_web_service import app
 from oac_web_service.models.annotation import Annotation, AnnotationError
+from oac_web_service.utils import requires_auth
 
 @app.route('/edit', methods=['PUT'])
+@requires_auth
 def edit():
     """
         PUT an existing annotation with the following parameters:

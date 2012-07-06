@@ -9,8 +9,10 @@ from java.lang import String
 from com.hp.hpl.jena.tdb import TDBFactory
 from com.hp.hpl.jena.tdb import TDB
 from com.hp.hpl.jena.query import ReadWrite
+from oac_web_service.utils import requires_auth
 
 @app.route('/create', methods=['POST'])
+@requires_auth
 def create():
     """
         POST a new annotation with the following parameters:
