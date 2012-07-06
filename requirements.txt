@@ -6,3 +6,6 @@ unittest2==0.5.1
 nose==1.1.2
 simplejson==2.5.2
 pytz==2012c
+rdflib==3.2.1
+rdfextras==0.2
+git+https://github.com/RDFLib/rdflib-jsonld.git#egg=rdflib-jsonld

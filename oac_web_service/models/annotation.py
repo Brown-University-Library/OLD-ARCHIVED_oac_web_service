@@ -1,6 +1,11 @@
 from oac_web_service.models.foxml import Foxml
 from oac_web_service.models.fedora import Fedora
 from oac_web_service import app
+from rdflib.graph import Graph, plugin
+from rdflib.serializer import Serializer
+from xml.etree import ElementTree as ET
+
+plugin.register("rdf-json", Serializer, "rdflib_jsonld.jsonld_serializer", "JsonLDSerializer")
 
 class Annotation(object):
     def __init__(self, **kwargs):
@@ -37,7 +42,7 @@ class Annotation(object):
         self.build_annotation()
 
     @classmethod
-    def serialize(cls, pid):
+    def serialize(cls, pid, format):
         """
         Get list of datastreams from a PID and pick out
         'annotation', 'specifictarget', and 'selector'
@@ -55,7 +60,24 @@ class Annotation(object):
             rdf_ds = Fedora.get_datastream(pid, d)
             [xmls.append(x) for x in Foxml.get_rdf_descriptions(rdf_ds)]
 
-        return Foxml.get_rdf_string_from_descriptions(xmls)
+        rdf_xml_string = Foxml.get_rdf_string_from_descriptions(xmls)
+
+        if format.lower() == 'rdf/xml' or format.lower() == 'xml':
+            # We don't need to build an rdflib Graph if the output is RDF/XML
+            return rdf_xml_string, 'application/rdf+xml'
+        else:
+            out = Graph()
+            out.parse(data=rdf_xml_string, format="application/rdf+xml")
+
+            if format.lower() == 'n3':
+                return out.serialize(format="n3"), "text/rdf+n3"
+            elif format.lower() == 'turtle' or format.lower() == 'ttl':
+                return out.serialize(format="turtle"), "text/turtle"
+            elif format.lower() == 'nt':
+                return out.serialize(format="nt"), "text/nt"
+            elif format.lower() == 'rdf/json' or format.lower() == 'json':
+                return out.serialize(format="rdf-json"), "application/rdf+json"
+
 
     def load(self):
         """
