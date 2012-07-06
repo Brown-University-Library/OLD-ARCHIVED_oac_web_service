@@ -1,7 +1,7 @@
 import traceback
 from datetime import datetime
 from flask import request, jsonify
-from oac_web_service import app, db_path
+from oac_web_service import app
 from oac_web_service.models.annotation import Annotation, AnnotationError
 from xml.etree.ElementTree import tostring
 from java.io import ByteArrayInputStream
@@ -98,7 +98,7 @@ def create():
         annote.submit()
         if annote.validate():
             # Start dataset transaction
-            dataset = TDBFactory.createDataset(db_path)
+            dataset = TDBFactory.createDataset(app.config['STORE_LOCATION'])
             dataset.begin(ReadWrite.WRITE)
             try:
                 model = dataset.getDefaultModel()

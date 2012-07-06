@@ -10,6 +10,11 @@ OAC_PASS = ""
 
 DEFUALT_ANNOTATION_CONTENT_MODEL = "bdr-cmodel:oa-annotation"
 
+# The folder location where the index store should be created and kept.
+# Path needs to be writable by the user running Tomcat
+import os
+STORE_LOCATION = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+
 pid_path = "/fedora/objects/nextPID"
 FEDORA_PID_URL = "%s:%s%s" % (FEDORA_HOST, FEDORA_PORT, pid_path)
 

@@ -1,6 +1,6 @@
 import traceback
 from flask import request, jsonify, make_response
-from oac_web_service import app, db_path
+from oac_web_service import app
 from oac_web_service.models.annotation import Annotation, AnnotationError
 from java.lang import String, NullPointerException
 from com.hp.hpl.jena.tdb import TDBFactory
@@ -21,7 +21,7 @@ def sparql():
         query = QueryFactory.create(String(q))
 
         # Start dataset READ transaction
-        dataset = TDBFactory.createDataset(db_path)
+        dataset = TDBFactory.createDataset(app.config['STORE_LOCATION'])
         dataset.begin(ReadWrite.READ)
         try:
             qexec = QueryExecutionFactory.create(query, dataset)
