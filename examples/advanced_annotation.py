@@ -11,6 +11,7 @@ params = {
     "dc_title"              : "Open Annotation Collaboration Annotation object (A-1)",
     "oa_selector"           : "/for/example/an/xpath/statement",
     "oa_selector_type_uri"  : "oa:Fragment",
+    "fragment_type"         : "http://www.w3.org/TR/xpath/",
     "annotator"             : "Gilbert",
     "generator"             : "Web Client",
     "body_content_model"    : "bdr-cmodel:tei-annotation"

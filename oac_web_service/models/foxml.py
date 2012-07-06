@@ -255,6 +255,7 @@ class Foxml(object):
         annotation_pid = kwargs.pop('pid')
         oa_selector = kwargs.pop('oa_selector')
         oa_selector_type_uri = kwargs.pop('oa_selector_type_uri')
+        fragment_type = kwargs.pop('fragment_type')
 
         descrip = Element("{%s}Description" % cls.RDFNS)
         descrip.set("{%s}about" % cls.RDFNS, "info:fedora/" + annotation_pid + "/selector")
@@ -262,6 +263,11 @@ class Foxml(object):
         typee = Element("{%s}type" % cls.RDFNS)
         typee.set("{%s}resource" % cls.RDFNS, oa_selector_type_uri)
         descrip.append(typee)
+
+        if fragment_type is not None:
+            frag_type = Element("{%s}type" % cls.RDFNS)
+            frag_type.set("{%s}resource" % cls.RDFNS, fragment_type)
+            descrip.append(frag_type)
 
         value = Element("{%s}value" % cls.RDFNS)
         value.text = oa_selector

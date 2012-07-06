@@ -45,7 +45,12 @@ def create():
 
         oa_selector:            A string with the selector value(0 or 1)
 
-        oa_selector_type_uri:   TBD (0 or 1)
+        oa_selector_type_uri:   Required if an oa_selector is passed in
+                                ie. oa:Fragment
+
+        fragment_type:          URI describing the oa_selector type  Optional and only used if
+                                an oa_selector is passed in.
+                                ie. 'http://www.w3.org/TR/xpath/'
 
         body_content_model:     A string representing the body's content model
                                 ie. 'tei-annotation'
@@ -86,7 +91,8 @@ def create():
                             generator = request.form.get('generator', None),
                             oax_style_uri = request.form.get('oax_style_uri', None),
                             oa_selector = request.form.get('oa_selector', None),
-                            oa_selector_type_uri = request.form.get('oa_selector_type_uri', None))
+                            oa_selector_type_uri = request.form.get('oa_selector_type_uri', None),
+                            fragment_type = request.form.get('fragment_type', None))
         
         annote.create()
         annote.submit()

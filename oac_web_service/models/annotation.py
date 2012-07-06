@@ -30,6 +30,7 @@ class Annotation(object):
         self._oax_style_uri = kwargs.pop('oax_style_uri', None)
         self._oa_selector = kwargs.pop('oa_selector', None)
         self._oa_selector_type_uri = kwargs.pop('oa_selector_type_uri', None)
+        self._fragment_type = kwargs.pop('fragment_type', None)
 
     def create(self):
         if self._source_uri is None or self._dc_title is None:
@@ -202,7 +203,8 @@ class Annotation(object):
             sele_uri = "%s/selector" % self._annotation_uri
             self.selector_rdf_element = Foxml.get_selector_rdf_element(pid=self._annotation_pid,
                                                                        oa_selector=self._oa_selector,
-                                                                       oa_selector_type_uri=self._oa_selector_type_uri)
+                                                                       oa_selector_type_uri=self._oa_selector_type_uri,
+                                                                       fragment_type=self._fragment_type)
             foxml.create_xml_datastream(element=self.selector_rdf_element,
                                         id="selector",
                                         mime="application/rdf+xml",
