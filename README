@@ -1,1 +1,9 @@
 Jython OAC Web Service
+
+
+=== Enabling JMS ===
+
+Enabled the JMS interface so that we can listen for updates to FEDORA datastreams.  Edit your fedora.fcfg file and change the <module> with class="fedora.server.messaging.MessagingModule" from 
+<param name="enabled" value="false"/>
+to 
+<param name="enabled" value="true"/>
