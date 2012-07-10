@@ -1,7 +1,0 @@
-<Context>
-
-    <ResourceLink global="jms/ConnectionFactory" name="jms/ConnectionFactory" type="javax.jms.ConnectionFactory" />
-
-    <ResourceLink global="jms/fedora.apim.update" name="jms/fedora.apim.update" type="javax.jms.Topic" />
-
-</Context>
