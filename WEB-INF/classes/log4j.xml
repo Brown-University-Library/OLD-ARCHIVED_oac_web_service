@@ -1,0 +1,32 @@
+<log4j:configuration debug="false" xmlns:log4j="http://jakarta.apache.org/log4j/">  
+  
+  <appender class="org.apache.log4j.ConsoleAppender" name="CONSOLE-INFO">  
+    <layout class="org.apache.log4j.PatternLayout">  
+      <param name="ConversionPattern" value="%-5p - %-30c{1} - %m%n"></layout>  
+    <filter class="org.apache.log4j.varia.LevelMatchFilter">  
+      <param name="levelToMatch" value="info"><param name="acceptOnMatch" value="true"></filter>  
+    <filter class="org.apache.log4j.varia.DenyAllFilter">  
+  </filter></appender>  
+  
+  <logger name="org.apache">  
+    <level value="WARN">  
+  </level></logger>  
+  <logger name="org.springframework">  
+    <level value="debug">  
+  </level></logger>  
+  <logger name="org.apache.activemq">  
+    <level value="info">  
+  </level></logger>  
+  <logger name="org.apache.activemq.store.kahadb">  
+    <level value="warn">  
+  </level></logger>  
+  <logger name="com.icodingclub.jms">  
+    <level value="debug">  
+  </level></logger>  
+  
+  <root>  
+    <priority value="debug">  
+    <appender-ref ref="CONSOLE-INFO">  
+  </appender-ref></priority></root>  
+  
+</log4j:configuration>  

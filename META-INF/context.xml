@@ -1,24 +1,7 @@
-<Resource
-    name="jms/ConnectionFactory" 
-    auth="Container"
-    type="org.apache.activemq.ActiveMQConnectionFactory"
-    description="JMS Connection Factory"
-    factory="org.apache.activemq.jndi.JNDIReferenceFactory"
-    brokerURL="tcp://localhost:61616"
-    brokerName="oac_jms_broker" />
+<Context>
 
-<Resource
-    name="jms/fedora.apim.update"
-    auth="Container"
-    description="FedoraUpdates"
-    type="org.apache.activemq.command.ActiveMQTopic"
-    factory="org.apache.activemq.jndi.JNDIReferenceFactory"
-    physicalName="fedora.apim.update" />
+    <ResourceLink global="jms/ConnectionFactory" name="jms/ConnectionFactory" type="javax.jms.ConnectionFactory" />
 
-<Resource
-    name="jms/fedora.apim.access"
-    auth="Container"
-    type="org.apache.activemq.command.ActiveMQTopic"
-    description="FedoraUpdates"
-    factory="org.apache.activemq.jndi.JNDIReferenceFactory"
-    physicalName="fedora.apim.access" />
+    <ResourceLink global="jms/fedora.apim.update" name="jms/fedora.apim.update" type="javax.jms.Topic" />
+
+</Context>

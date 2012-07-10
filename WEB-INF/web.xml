@@ -54,4 +54,27 @@
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
 
+  <context-param>  
+    <param-name>contextConfigLocation</param-name>
+    <param-value>WEB-INF/spring/jms-context.xml</param-value>
+  </context-param>
+
+  <listener>  
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>  
+  </listener>
+
+  <resource-ref>
+      <res-ref-name>jms/ConnectionFactory</res-ref-name>
+      <res-type>javax.jms.ConnectionFactory</res-type>
+      <res-auth>Container</res-auth>
+      <res-sharing-scope>Shareable</res-sharing-scope>
+  </resource-ref>
+
+  <resource-ref>
+      <res-ref-name>jms/FedoraUpdates</res-ref-name>
+      <res-type>javax.jms.Topic</res-type>
+      <res-auth>Container</res-auth>
+      <res-sharing-scope>Shareable</res-sharing-scope>
+  </resource-ref>
+
 </web-app>

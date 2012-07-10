@@ -1,0 +1,38 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.0.xsd"
+        > 
+
+    <jee:jndi-lookup cache="true"
+                     expected-type="org.apache.activemq.ActiveMQConnectionFactory"
+                     id="connectionFactory"
+                     jndi-name="java:comp/env/jms/ConnectionFactory"
+                     lookup-on-startup="true"
+                     proxy-interface="javax.jms.ConnectionFactory"
+                     resource-ref="true">
+    </jee:jndi-lookup>
+  
+    <jee:jndi-lookup cache="true"
+                     expected-type="org.apache.activemq.command.ActiveMQTopic"
+                     id="fedoraUpdates"
+                     jndi-name="java:comp/env/jms/FedoraUpdates"
+                     lookup-on-startup="true"
+                     proxy-interface="javax.jms.Topic"
+                     resource-ref="true">
+    </jee:jndi-lookup>
+
+    <bean class="oac.jms.listener"
+          id="simpleMessageListener"></bean>
+
+    <bean class="org.springframework.jms.listener.DefaultMessageListenerContainer" id="jmsContainer">  
+        <property name="connectionFactory" ref="connectionFactory"></property>  
+        <property name="destination" ref="fedoraUpdates"></property>  
+        <property name="messageListener" ref="simpleMessageListener"></property>  
+        <property name="maxConcurrentConsumers" value="1"></property>  
+    </bean>  
+  
+</beans> 

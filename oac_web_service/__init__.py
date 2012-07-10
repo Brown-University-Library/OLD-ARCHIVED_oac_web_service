@@ -18,6 +18,15 @@ if not os.access(app.config['STORE_LOCATION'], os.W_OK | os.X_OK):
 
 app.config['STORE_LOCATION'] = os.path.join(app.config['STORE_LOCATION'], 'OAC.tdb')
 
+# Set up connection to JMS
+if app.config.get("SERVLET") is not False:
+    from javax.naming import InitialContext
+
+    initCtx = InitialContext()
+    jndiContext = initCtx.lookup("java:comp/env");
+
+    connectionFactory = jndiContext.lookup("jms/ConnectionFactory");
+    destination = jndiContext.lookup("jms/FedoraUpdates");
 
 import oac_web_service.views
 import oac_web_service.models
