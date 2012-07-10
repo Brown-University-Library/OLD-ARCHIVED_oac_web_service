@@ -39,10 +39,7 @@
     <init-param>
       <param-name>log_level</param-name>
       <param-value>debug</param-value>
-<!--  <param-value>info</param-value>  -->
-<!--  <param-value>warn</param-value>  -->
-<!--  <param-value>error</param-value> -->
-<!--  <param-value>fatal</param-value> -->
+      <!--param-value>error</param-value-->
     </init-param>
 
     <load-on-startup>1</load-on-startup>
@@ -54,4 +51,13 @@
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
 
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>WEB-INF/spring/jms.xml</param-value>
+  </context-param>
+
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
 </web-app>

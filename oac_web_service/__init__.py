@@ -18,6 +18,5 @@ if not os.access(app.config['STORE_LOCATION'], os.W_OK | os.X_OK):
 
 app.config['STORE_LOCATION'] = os.path.join(app.config['STORE_LOCATION'], 'OAC.tdb')
 
-
 import oac_web_service.views
 import oac_web_service.models
