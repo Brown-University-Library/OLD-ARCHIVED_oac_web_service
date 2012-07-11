@@ -236,8 +236,8 @@ class Annotation(object):
     def get_results(self):
         return  {
                     'errors'            : self._errors,
-                    'body_pid'          : self._body_pid,
-                    'annotation_pid'    : self._annotation_pid
+                    'body_uri'          : self._body_uri,
+                    'annotation_uri'    : self._annotation_uri
                 }
     results = property(get_results, None)
 
