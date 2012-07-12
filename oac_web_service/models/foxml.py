@@ -2,7 +2,10 @@ from xml.etree import ElementTree as ET
 from xml.etree.ElementTree import Element
 from datetime import datetime
 from oac_web_service.utils import *
+import os
 import pytz
+from subprocess import Popen, PIPE, STDOUT
+from tempfile import mkstemp
 
 class Foxml(object):
 
@@ -85,14 +88,23 @@ class Foxml(object):
         </rdf:RDF>
         """
         pid = kwargs.pop('pid')
-        model = kwargs.pop('model')
+        models = kwargs.pop('models', None)
+        services = kwargs.pop('services', None)
 
         descrip = Element("{%s}Description" % cls.RDFNS)
         descrip.set("{%s}about" % cls.RDFNS, "info:fedora/" + pid)
 
-        md = Element("{%s}hasModel" % cls.FEDORA_MODEL_NS)
-        md.set("{%s}resource" % cls.RDFNS, "info:fedora/" + model)
-        descrip.append(md)
+        if services is not None:
+             for service in services:
+                sv = Element("{%s}hasService" % cls.FEDORA_MODEL_NS)
+                sv.set("{%s}resource" % cls.RDFNS, "info:fedora/" + service)
+                descrip.append(sv)   
+
+        if models is not None:
+            for model in models:
+                md = Element("{%s}hasModel" % cls.FEDORA_MODEL_NS)
+                md.set("{%s}resource" % cls.RDFNS, "info:fedora/" + model)
+                descrip.append(md)
 
         rdf = Element("{%s}RDF" % cls.RDFNS)
         rdf.append(descrip)
@@ -379,3 +391,78 @@ class Foxml(object):
         #cleanup_namespaces(rdf,ET._namespace_map)
         indent(rdf)
         return ET.tostring(rdf)
+
+    @classmethod
+    def get_ez_elements(cls, **kwargs):
+        """
+            Takes a content_model parameter that defines what the default annotation content_model is.
+            This should be the same as: app.config.get('DEFUALT_ANNOTATION_CONTENT_MODEL')
+        """
+
+        # Paths
+        java_home = os.environ.get('JAVA_HOME', None)
+        if java_home is None:
+            java_bin = "java"
+        else:
+            java_bin = os.path.join(java_home, "bin/java")
+        resource_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'resources/ezservice')
+        jar_path = os.path.join(resource_path, 'saxon9.jar')
+        def_style_path = os.path.join(resource_path, 'ezdef.xsl')
+        dep_style_path = os.path.join(resource_path, 'ezdep.xsl')
+
+        # EzDef
+        defxml =""" <sdef pid="oac-sdef:serialize"
+                          label="OAC Annotation Object Serialization Service Definition">
+                        <method name="serialize">
+                            <user-input name="format" optional="true" default="xml">
+                                <valid value="rdf/xml"/>
+                                <valid value="xml"/>
+                                <valid value="rdf/json"/>
+                                <valid value="json"/>
+                                <valid value="turtle"/>
+                                <valid value="ttl"/>
+                                <valid value="nt"/>
+                                <valid value="n3"/>
+                            </user-input>
+                        </method>
+                    </sdef>
+                """
+        ezdef = mkstemp(suffix=".xml", text=True)
+        os.write(ezdef[0], defxml)
+        os.close(ezdef[0])
+
+        ezdef_cmd = "%s -jar %s -xsl:%s -versionmsg:off -s:%s" % (java_bin, jar_path, def_style_path, ezdef[1])
+        defproc = Popen([ezdef_cmd], shell=True, stdout=PIPE)
+        f = mkstemp(suffix=".xml", text=True)
+        ez_def_output = defproc.stdout.read()
+        os.write(f[0], ez_def_output)
+        os.close(f[0])
+
+        # EzDep
+        depxml = """<sdep pid="oac-sdep:serialize"
+                          label="OAC Annotation Object Serialization Service Deployment">
+                        <cmodel>%s</cmodel>
+                        <deployment>oac-sdef:serialize</deployment>
+                        <impl method="serialize">
+                            <default-input name="pid" value="$pid"/>
+                            <url-pattern>
+                                /oac_web_service/show
+                                ?format=(format)
+                                &amp;pid=(pid)
+                            </url-pattern>
+                        </impl>
+                    </sdep>
+                """ % kwargs.pop("content_model")
+        ezdep = mkstemp(suffix=".xml", text=True)
+        os.write(ezdep[0], depxml)
+        os.close(ezdep[0])
+
+        ezdep_cmd = "%s -jar %s -xsl:%s -versionmsg:off -s:%s ezdef=%s" % (java_bin, jar_path, dep_style_path, ezdep[1], ezdef[1])
+        depproc = Popen([ezdep_cmd], shell=True, stdout=PIPE)
+        ez_dep_output = depproc.stdout.read()
+
+        os.remove(ezdef[1])
+        os.remove(ezdep[1])
+        os.remove(f[1])
+
+        return ez_def_output, ez_dep_output

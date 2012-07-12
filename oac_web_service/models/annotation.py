@@ -126,7 +126,7 @@ class Annotation(object):
                 # Optional RELS-EXT Datastream for the content model
                 if self._body_content_model is not None:
                     body_rels_ext_rdf_element = Foxml.get_rels_ext_model_element(pid=self._body_pid,
-                                                                                 model=self._body_content_model)
+                                                                                 models=[self._body_content_model])
                     foxml.create_xml_datastream(element=body_rels_ext_rdf_element,
                                                 id="RELS-EXT",
                                                 mime="application/rdf+xml",
@@ -172,13 +172,16 @@ class Annotation(object):
                                     label="OAC annotation core",
                                     fedora_uri=anno_uri)
 
-
         # RELS-EXT Datastream
         # This 'get' should never fall back to '' because there is a default annotation content model ('oac:oa-annotation')
-        model = app.config.get('DEFUALT_ANNOTATION_CONTENT_MODEL', '')
+        oac_model = app.config.get('DEFUALT_ANNOTATION_CONTENT_MODEL', '')
+
+        # The PID of the SDef object for Annotation Serialization
+        serialization_service = "oac-sdef:serialize"
 
         self.rels_ext_rdf_element = Foxml.get_rels_ext_model_element(pid=self._annotation_pid,
-                                                                     model=model)
+                                                                     models=[oac_model],
+                                                                     services=[serialization_service])
         foxml.create_xml_datastream(element=self.rels_ext_rdf_element,
                                     id="RELS-EXT",
                                     mime="application/rdf+xml",
