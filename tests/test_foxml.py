@@ -175,7 +175,7 @@ class FoxmlTest(unittest.TestCase):
                     </foxml:datastream>
                     """
         ele = Foxml.get_rels_ext_model_element(pid='1',
-                                               model='tei-annotation')
+                                               models=['tei-annotation'])
 
         ds = Foxml.get_xml_datastream(element=ele,
                                       id="RELS-EXT",
