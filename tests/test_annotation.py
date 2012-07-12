@@ -16,4 +16,8 @@ class FoxmlTest(unittest.TestCase):
         assert self.annotation.validate()
 
     def test_serialize(self):
-        lst = Annotation.serialize('changeme:350')
+        lst = Annotation.serialize([])
+
+        lst = Annotation.serialize(['changeme:350'])
+
+        lst = Annotation.serialize(['changeme:9, changeme:166'])

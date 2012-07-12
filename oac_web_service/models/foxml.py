@@ -388,8 +388,6 @@ class Foxml(object):
         rdf.set('xmlns:dc', cls.DC_NS)
 
         [rdf.append(d) for d in elements]
-        #cleanup_namespaces(rdf,ET._namespace_map)
-        indent(rdf)
         return ET.tostring(rdf)
 
     @classmethod

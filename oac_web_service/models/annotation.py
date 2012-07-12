@@ -43,41 +43,48 @@ class Annotation(object):
         self.build_annotation()
 
     @classmethod
-    def serialize(cls, pid, format):
+    def serialize(cls, pids, format):
         """
-        Get list of datastreams from a PID and pick out
-        'annotation', 'specifictarget', and 'selector'
+        Get list of datastreams from an array of PIDs
 
         With those, get all rdf:Description elements and output
-        """
-        datastreams = Fedora.get_datastream_list(pid)
+        in the format specified.
 
-        # Error messages
-        if not isinstance(datastreams, list):
-            return datastreams
+        Format options are:
+            - rdf/xml or xml (default)
+            - rdf/json or json
+            - turtle or ttl
+            - nt
+            - n3
+        """
 
         xmls = []
-        for d in datastreams:
-            rdf_ds = Fedora.get_datastream(pid, d)
-            [xmls.append(x) for x in Foxml.get_rdf_descriptions(rdf_ds)]
 
-        rdf_xml_string = Foxml.get_rdf_string_from_descriptions(xmls)
+        for pid in pids:
+            datastreams = Fedora.get_datastream_list(pid)
+            if not isinstance(datastreams, list):
+                # There was an error with this PID, skip it
+                continue
+            for d in datastreams:
+                [xmls.append(x) for x in Foxml.get_rdf_descriptions(Fedora.get_datastream(pid, d))]
+
+        rdf_xml_string = Foxml.get_rdf_string_from_descriptions(list(xmls))
+
+        out = Graph()
+        out.parse(data=rdf_xml_string, format="application/rdf+xml")
 
         if format.lower() == 'rdf/xml' or format.lower() == 'xml':
-            # We don't need to build an rdflib Graph if the output is RDF/XML
-            return rdf_xml_string, 'application/rdf+xml'
+            return out.serialize(format="xml"), "application/rdf+xml"
+        if format.lower() == 'n3':
+            return out.serialize(format="n3"), "text/rdf+n3"
+        elif format.lower() == 'turtle' or format.lower() == 'ttl':
+            return out.serialize(format="turtle"), "text/turtle"
+        elif format.lower() == 'nt':
+            return out.serialize(format="nt"), "text/nt"
+        elif format.lower() == 'rdf/json' or format.lower() == 'json':
+            return out.serialize(format="rdf-json"), "application/rdf+json"
         else:
-            out = Graph()
-            out.parse(data=rdf_xml_string, format="application/rdf+xml")
-
-            if format.lower() == 'n3':
-                return out.serialize(format="n3"), "text/rdf+n3"
-            elif format.lower() == 'turtle' or format.lower() == 'ttl':
-                return out.serialize(format="turtle"), "text/turtle"
-            elif format.lower() == 'nt':
-                return out.serialize(format="nt"), "text/nt"
-            elif format.lower() == 'rdf/json' or format.lower() == 'json':
-                return out.serialize(format="rdf-json"), "application/rdf+json"
+            raise AnnotationError("Serialization format '%s' is not supported.")
 
 
     def load(self):
