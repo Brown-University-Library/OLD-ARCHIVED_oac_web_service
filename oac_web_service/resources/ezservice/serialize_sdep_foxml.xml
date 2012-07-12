@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" VERSION="1.1"
+                     PID="oac-sdep:serialize">
+   <foxml:objectProperties>
+      <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+      <foxml:property NAME="info:fedora/fedora-system:def/model#label"
+                      VALUE="OAC Annotation Object Serialization Service Deployment"/>
+   </foxml:objectProperties>
+   <foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X" STATE="A" VERSIONABLE="true">
+      <foxml:datastreamVersion ID="RELS-EXT1.0" FORMAT_URI="info:fedora/fedora-system:FedoraRELSExt-1.0"
+                               LABEL="RDF Statements about this object"
+                               MIMETYPE="application/rdf+xml">
+         <foxml:xmlContent>
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                     xmlns:fedora-model="info:fedora/fedora-system:def/model#">
+               <rdf:Description rdf:about="info:fedora/oac-sdep:serialize">
+                  <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:ServiceDeployment-3.0"/>
+                  <fedora-model:isDeploymentOf rdf:resource="info:fedora/oac-sdef:serialize"/>
+                  <fedora-model:isContractorOf rdf:resource="info:fedora/bdr-cmodel:oa-annotation"/>
+               </rdf:Description>
+            </rdf:RDF>
+         </foxml:xmlContent>
+      </foxml:datastreamVersion>
+   </foxml:datastream>
+   <foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" STATE="A" VERSIONABLE="true">
+      <foxml:datastreamVersion ID="METHODMAP1.0"
+                               FORMAT_URI="info:fedora/fedora-system:FedoraSDepMethodMap-1.1"
+                               LABEL="Deployment Method Map"
+                               MIMETYPE="text/xml">
+         <foxml:xmlContent>
+            <fmm:MethodMap xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap" name="N/A">
+               <fmm:method operationName="serialize" wsdlMsgName="serializeRequest"
+                           wsdlMsgOutput="response">
+                  <fmm:UserInputParm parmName="format" defaultValue="xml" passBy="VALUE" required="false">
+                     <fmm:ValidParmValues>
+                        <fmm:ValidParm value="rdf/xml"/>
+                        <fmm:ValidParm value="xml"/>
+                        <fmm:ValidParm value="rdf/json"/>
+                        <fmm:ValidParm value="json"/>
+                        <fmm:ValidParm value="turtle"/>
+                        <fmm:ValidParm value="ttl"/>
+                        <fmm:ValidParm value="nt"/>
+                        <fmm:ValidParm value="n3"/>
+                     </fmm:ValidParmValues>
+                  </fmm:UserInputParm>
+                  <fmm:DefaultInputParm parmName="pid" defaultValue="$pid" passBy="VALUE" required="TRUE"/>
+                  <fmm:MethodReturnType wsdlMsgName="response" wsdlMsgTOMIME="N/A"/>
+               </fmm:method>
+            </fmm:MethodMap>
+         </foxml:xmlContent>
+      </foxml:datastreamVersion>
+   </foxml:datastream>
+   <foxml:datastream ID="DSINPUTSPEC" CONTROL_GROUP="X" STATE="A" VERSIONABLE="true">
+      <foxml:datastreamVersion ID="DSINPUTSPEC1.0"
+                               FORMAT_URI="info:fedora/fedora-system:FedoraDSInputSpec-1.1"
+                               LABEL="Datastream Input Specification"
+                               MIMETYPE="text/xml">
+         <foxml:xmlContent>
+            <fbs:DSInputSpec xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec" label="N/A"/>
+         </foxml:xmlContent>
+      </foxml:datastreamVersion>
+   </foxml:datastream>
+   <foxml:datastream ID="WSDL" CONTROL_GROUP="X" STATE="A" VERSIONABLE="true">
+      <foxml:datastreamVersion ID="WSDL1.0" FORMAT_URI="http://schemas.xmlsoap.org/wsdl/"
+                               LABEL="WSDL Bindings"
+                               MIMETYPE="text/xml">
+         <foxml:xmlContent>
+            <wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                              xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                              xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+                              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap"
+                              xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding"
+                              xmlns:this="urn:thisNamespace"
+                              xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                              name="N/A"
+                              targetNamespace="urn:thisNamespace">
+               <wsdl:types>
+                  <xsd:schema targetNamespace="urn:thisNamespace">
+                     <xsd:simpleType name="inputType">
+                        <xsd:restriction base="xsd:string"/>
+                     </xsd:simpleType>
+                  </xsd:schema>
+               </wsdl:types>
+               <wsdl:message name="serializeRequest">
+                  <wsdl:part name="format" type="this:inputType"/>
+                  <wsdl:part name="pid" type="this:inputType"/>
+               </wsdl:message>
+               <wsdl:message name="response">
+                  <wsdl:part name="response" type="xsd:base64Binary"/>
+               </wsdl:message>
+               <wsdl:portType name="portType">
+                  <wsdl:operation name="serialize">
+                     <wsdl:input message="this:serializeRequest"/>
+                     <wsdl:output message="this:response"/>
+                  </wsdl:operation>
+               </wsdl:portType>
+               <wsdl:service name="N/A">
+                  <wsdl:port binding="this:binding" name="port">
+                     <http:address location="LOCAL"/>
+                  </wsdl:port>
+               </wsdl:service>
+               <wsdl:binding name="binding" type="this:portType">
+                  <http:binding verb="GET"/>
+                  <wsdl:operation name="serialize">
+                     <http:operation location="/oac_web_service/show?format=(format)&amp;pid=(pid)"/>
+                     <wsdl:input>
+                        <http:urlReplacement/>
+                     </wsdl:input>
+                     <wsdl:output>
+                        <mime:content type="N/A"/>
+                     </wsdl:output>
+                  </wsdl:operation>
+               </wsdl:binding>
+            </wsdl:definitions>
+         </foxml:xmlContent>
+      </foxml:datastreamVersion>
+   </foxml:datastream>
+</foxml:digitalObject>

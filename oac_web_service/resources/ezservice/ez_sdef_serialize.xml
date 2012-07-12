@@ -1,0 +1,15 @@
+<sdef pid="oac-sdef:serialize"
+      label="OAC Annotation Object Serialization Service Definition">
+    <method name="serialize">
+        <user-input name="format" optional="true" default="xml">
+            <valid value="rdf/xml"/>
+            <valid value="xml"/>
+            <valid value="rdf/json"/>
+            <valid value="json"/>
+            <valid value="turtle"/>
+            <valid value="ttl"/>
+            <valid value="nt"/>
+            <valid value="n3"/>
+        </user-input>
+    </method>
+</sdef>

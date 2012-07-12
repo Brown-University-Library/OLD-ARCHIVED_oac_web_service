@@ -9,21 +9,8 @@ to
 <param name="enabled" value="true"/>
 
 
-=== Edit Tomcat's Server XML ===
+=== Changing the default content model ===
 
-Add the following under <GlobalNamingResources>
-
-<Resource auth="Container" 
-    name="jms/ConnectionFactory" 
-    type="org.apache.activemq.ActiveMQConnectionFactory" 
-    description="JMS Connection Factory" 
-    factory="org.apache.activemq.jndi.JNDIReferenceFactory" 
-    brokerURL="vm://localhost" 
-    brokerName="MyActiveMQBroker" /> 
- 
-<Resource auth="Container"
-	name="jms/FedoraUpdates"                                
-	type="org.apache.activemq.command.ActiveMQTopic"
-	description="FedoraUpdates"
-	factory="org.apache.activemq.jndi.JNDIReferenceFactory"
-	physicalName="fedora.apim.update" />
+fedora_settings.py has a line for changing the default content model associated with annotations in Fedora. 
+If you change this, you also need to edit the oac_web_service/resources/ezservice/ez_sdep_serialize.xml file
+and change "bdr-cmodel:oa-annotation" to be the same value as in fedora_settings.py.

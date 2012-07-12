@@ -1,0 +1,13 @@
+<sdep pid="oac-sdep:serialize"
+      label="OAC Annotation Object Serialization Service Deployment">
+    <cmodel>bdr-cmodel:oa-annotation</cmodel>
+    <deployment>oac-sdef:serialize</deployment>
+    <impl method="serialize">
+        <default-input name="pid" value="$pid"/>
+        <url-pattern>
+            /oac_web_service/show
+            ?format=(format)
+            &amp;pid=(pid)
+        </url-pattern>
+    </impl>
+</sdep>
