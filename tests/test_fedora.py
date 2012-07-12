@@ -17,3 +17,10 @@ class FedoraTest(unittest.TestCase):
         datastreams = Fedora.get_datastream_list('changeme:9')
         assert len(datastreams) == 5
         assert datastreams == ['DC', 'annotation', 'RELS-EXT', 'specifictarget', 'selector']
+
+    def test_sparql(self):
+        rows = Fedora.get_sparql_query_resuts("prefix fm: <info:fedora/fedora-system:def/model#> select ?s where {?s fm:hasModel <info:fedora/bdr-cmodel:oa-annotation> }")
+        non_it = list(rows)
+        assert len(non_it) > 0
+        assert non_it[0].find("info:fedora/changeme:") != -1
+        assert non_it[-1].find("info:fedora/changeme:") != -1

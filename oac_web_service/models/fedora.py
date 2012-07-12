@@ -1,3 +1,4 @@
+import csv
 import base64
 import urllib2, urllib
 from oac_web_service import app
@@ -112,6 +113,27 @@ class Fedora(object):
                 return "No object with the PID %s" % pid
             else:
                 return e.read()
+
+    @classmethod
+    def get_sparql_query_resuts(cls, query):
+        url = app.config['FEDORA_SPARQL_QUERY_URL']
+        params = { 
+          "dt"            : "on",
+          "format"        : "CSV",
+          "lang"          : "sparql",
+          "query"         : query,
+          "type"          : "tuples"
+        }
+        encoded_data = urllib.urlencode( params )
+        request = urllib2.Request( url, encoded_data )
+
+        base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
+        request.add_header( "Authorization", "Basic %s" % base64_auth_string )
+        response = urllib2.urlopen( request )
+        csv_response = response.read()
+        for row in csv_response.split('\n'):
+            if row != None and row != "\"s\"" and row.strip() != "":
+                yield row
 
     @classmethod
     def get_pid(cls):

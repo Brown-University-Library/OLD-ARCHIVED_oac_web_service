@@ -28,3 +28,4 @@ ds_path = "%s/{dsid}" % list_path
 FEDORA_DATASTREAM_URL = "%s:%s%s" % (FEDORA_HOST, FEDORA_PORT, ds_path)
 FEDORA_GET_DATASTREAM_URL = "%s:%s%s/content" % (FEDORA_HOST, FEDORA_PORT, ds_path)
 
+FEDORA_SPARQL_QUERY_URL = "%s:%s/fedora/risearch" % (FEDORA_HOST, FEDORA_PORT)
