@@ -43,7 +43,7 @@ class Annotation(object):
         self.build_annotation()
 
     @classmethod
-    def serialize(cls, pids, format):
+    def serialize(cls, pids, format=None):
         """
         Get list of datastreams from an array of PIDs
 
@@ -57,6 +57,8 @@ class Annotation(object):
             - nt
             - n3
         """
+        if format is None:
+            format = 'xml'
 
         xmls = []
 
