@@ -9,7 +9,14 @@ from com.hp.hpl.jena.query import QueryParseException, QueryFactory, QueryExecut
 @app.route('/sparql', methods=['POST','GET'])
 def sparql():
     """
-        POST or GET a SPARQL Query to the annotations index
+        A POST or GET method to query the Open Annotations index with a SPARQL Query
+
+        This method has READ access to the Annotations index.
+
+        Required parameters:
+
+          query:      The SPARQL query to execute
+
     """
     sparql_xml_results = ""
     try:

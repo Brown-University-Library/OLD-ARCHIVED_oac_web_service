@@ -15,7 +15,8 @@ from oac_web_service.utils import requires_auth
 @requires_auth
 def create():
     """
-        POST a new annotation with the following parameters:
+        A POST method that creates an Annotation (A-1) object
+        based on a number of parameters.
 
         Required Parameters:
 
