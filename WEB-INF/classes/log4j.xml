@@ -8,6 +8,15 @@
     <layout class="org.apache.log4j.PatternLayout">  
       <param name="ConversionPattern" value="%-5p - %-30c{1} - %m%n" />
     </layout>  
+  </appender>
+
+  <appender class="org.apache.log4j.RollingFileAppender" name="file">  
+    <param name="File" value="${catalina.home}/logs/oac_web_service.log"/> 
+    <param name="MaxFileSize" value="10MB"/>
+    <param name="MaxBackupIndex" value="5"/>
+    <layout class="org.apache.log4j.PatternLayout">  
+      <param name="ConversionPattern" value="%-5p - %-30c{1} - %m%n" />
+    </layout>  
   </appender>  
   
   <logger name="MessageListenerImpl">
@@ -29,6 +38,7 @@
   <root>  
     <priority value="info" />  
     <appender-ref ref="console" />
+    <appender-ref ref="file" />
   </root>  
   
 </log4j:configuration>  
