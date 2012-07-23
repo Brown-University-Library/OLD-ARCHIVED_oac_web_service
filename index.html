@@ -1,0 +1,284 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Open Annotation plugin for Fedora by Brown-University-Library</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Open Annotation plugin for Fedora</h1>
+        <p class="header">Funded by the Andrew W. Mellon Foundation</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/Brown-University-Library/oac_web_service/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/Brown-University-Library/oac_web_service/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/Brown-University-Library/oac_web_service">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/Brown-University-Library">Brown-University-Library</a></p>
+
+
+      </header>
+      <section>
+        <h1>Open Annotation plugin for Fedora</h1>
+
+<p>The Open Annotation plugin for Fedora is a content-agnostic web service that allows developers to create, query, retrieve, and serialize annotations using the Fedora Commons repository software to store annotations and their content.  The plugin is designed to implement the <a href="http://www.openannotation.org/spec/core/">Open Annotation Core Data Model</a>:</p>
+
+<blockquote>
+<p>The Open Annotation Core Data Model specifies an interoperable framework for creating associations between related resources, annotations, using a methodology which conforms to the Architecture of the World Wide Web. Open Annotations can easily be shared between platforms, with sufficient richness of expression to satisfy complex requirements while remaining simple enough to also allow for the most common use cases, such as attaching a piece of text to a single web resource.</p>
+
+<p>An Annotation is considered to be a set of connected resources, including a body and target, and conveys that the body is somehow about the target. The full model supports additional functionality, enabling semantic tagging, embedding content, selecting segments of resources, choosing the appropriate representation of a resource and providing styling hints for consuming clients.</p>
+</blockquote>
+
+<h2>This application consists of several components:</h2>
+
+<h4>A Jython web service that:</h4>
+
+<ul>
+<li>Creates annotation objects (default cmodel:oa-annotation) in Fedora [via HTTP POST].</li>
+<li>Optionally, creates annotation bodies as new objects in Fedora.  Annotation bodies can also be URIs for existing resources on the web. [via HTTP POST]</li>
+<li>Indexes the RDF content of annotations objects</li>
+<li>Provides a SPARQL endpoint for searching and retrieving data from the annotation index [via HTTP GET or HTTP POST]</li>
+<li>Serializes annotations and/or dumps the entire repository as RDF/XML, JSON, NT, TTL, or CSV [via HTTP GET]</li>
+</ul><h4>Fedora objects to support the use of the OA service:</h4>
+
+<ul>
+<li>Fedora content model (cmodel:oa-annotation) that includes the following datastreams:</li>
+<li>Dublin Core</li>
+<li>annotation (rdf/xml)</li>
+<li>specifictarget (rdf/xml)</li>
+<li>selector (rdf/xml)</li>
+<li>Service Definition (SDef) and Service Definition (SDep) for serializing oa-annotation objects</li>
+</ul><h3>Requirements</h3>
+
+<ul>
+<li>Instance of <a href="https://wiki.duraspace.org/display/FEDORA35/Fedora+3.5+Documentation">Fedora Commons 3.5</a> running</li>
+<li>Java Servlet container (tested on Tomcat 6/7) in which to install this plugin</li>
+</ul><h3>Quick Start</h3>
+
+<p><strong><em>Note: A full installation is recommended for a production system</em></strong></p>
+
+<ul>
+<li>Download <a href="https://github.com/downloads/Brown-University-Library/oac_web_service/oac_web_service.war">this</a> WAR file (version 0.9)</li>
+<li>Deploy into your favorite Java Servlet container</li>
+<li>Edit the <code>webapps/oac_web_service/fedora_settings.py</code> file and enter the following information:
+
+<ul>
+<li>
+<code>FEDORA_HOST</code> : the host of your fedora installation, as accessed by the java servlet container  ie. http://localhost</li>
+<li>
+<code>FEDORA_PORT</code> : the port of your fedora installation, ie. 8080</li>
+<li>
+<code>FEDORA_USER</code> : the fedora username to connect as.  this user must have access to the API-M methods of the <a href="https://wiki.duraspace.org/display/FEDORA35/REST+API">REST API</a>
+</li>
+<li>
+<code>FEDORA_PASS</code> : the password for the above user</li>
+</ul>
+</li>
+<li>Restart your Java Servlet container</li>
+<li>See the API section below to test your installation</li>
+</ul><h3>Full Installation Notes</h3>
+
+<h4>Persist local installation setting over updates</h4>
+
+<ul>
+<li>Copy the <code>webapps/oac_web_service/fedora_settings.py</code> file to somewhere outside of your Java Servlet's directory tree.
+<strong>The user that runs your Java Servlet container will need read permissions on this new file</strong>
+</li>
+<li>Set an environmental variable named <code>FEDORA_SETTINGS</code> to point to the new <code>fedora_settings.py</code> file you just created.  For example, if using Tomcat on Linux, create or edit the <code>$CATALINA_HOME/bin/setenv.sh</code> file and add the following line:
+<code>export FEDORA_SETTINGS=/the/location/of/your/new/fedora_settings.py</code>
+</li>
+<li>Edit the <code>fedora_settings.py</code> file and enter the following information:
+
+<ul>
+<li>
+<code>FEDORA_HOST</code> : the host of your fedora installation, as accessed by the java servlet container  ie. http://localhost</li>
+<li>
+<code>FEDORA_PORT</code> : the port of your fedora installation, ie. 8080</li>
+<li>
+<code>FEDORA_USER</code> : the fedora username to connect as.  this user must have access to the API-M methods of the <a href="https://wiki.duraspace.org/display/FEDORA35/REST+API">REST API</a>
+</li>
+<li>
+<code>FEDORA_PASS</code> : the password for the above user</li>
+</ul>
+</li>
+</ul><h4>Keep in sync with Fedora</h4>
+
+<p>To keep the Open Annotations index to stay in sync with Fedora, <strong>only one</strong> of the following two options needs to be done.</p>
+
+<p>1.) <strong>Messaging</strong></p>
+
+<p>Messaging will ensure that the Open Annotation index is always in sync with Fedora, but requires that your Fedora instance is sending update messages to a JMS broker.</p>
+
+<ul>
+<li>Edit the <code>webapps/oac_web_service/WEB-INF/web.xml</code> file and uncomment the <code>&lt;listener&gt;</code> tag at the bottom so it looks like:
+      <code>&lt;listener&gt;
+          &lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;
+      &lt;/listener&gt;</code>
+</li>
+<li>Edit the <code>webapps/oac_web_service/WEB-INF/spring/jms.xml</code> file and change the following:
+
+<ul>
+<li>Set the <code>brokerURL</code> in <code>&lt;amq:connectionFactory id="amq.connectionFactory" brokerURL=""/&gt;</code><br><strong>The brokerURL defaults to 'tcp://localhost:61616', which is the default JMS broker in Fedora.</strong>
+</li>
+<li>Set the <code>destination</code> in <code>&lt;jms:listener destination="" ref="consumer.messageListener" /&gt;</code><br><strong>The <code>destination</code> is the topic that the OAC service will listen to.  This defaults to Fedora's default: <code>fedora.apim.update</code>.</strong>
+</li>
+</ul>
+</li>
+</ul><p>2.) <strong>Scheduled Job</strong></p>
+
+<p>You will need to set up a scheduled job to run the following command:</p>
+
+<div class="highlight">
+<pre>  the <span class="nb">command</span>
+</pre>
+</div>
+
+
+<h3>API</h3>
+
+<p>There are three main services the Open Annoatino plugin provides: Create, Serialize, and Query</p>
+
+<h4>Create</h4>
+
+<pre><code>A POST method that creates an Annotation (A-1) object
+based on a number of parameters.
+
+Required Parameters:
+  source_uri:             The URI for the whole target object
+  dc_title:               Dublin Core title associated with the annotation, 
+                          i.e. "dublin core title goes here" 
+  body_content:           Contents of the body (XML, text, json, etc.)
+      AND
+  body_mimetype:          Mimetype of the body_content
+      OR
+  body_uri:               URI pointing to the body of the annotation
+
+Optional Parameters:
+  annotator:              A string representing a user ID (0 or more)
+                          ie. 'Charly'
+  generator:              A string representing what generated the annotation
+                          ie. 'Web Client'
+  oax_style_uri:          A URI for a XSLT stylesheet used to render the whole target object. (0 or 1)
+  oa_selector:            A string with the selector value(0 or 1)
+  oa_selector_type_uri:   Required if an oa_selector is passed in
+                          ie. oa:Fragment
+  fragment_type:          URI describing the oa_selector type  Optional and only used if
+                          an oa_selector is passed in.
+                          ie. 'http://www.w3.org/TR/xpath/'
+  body_content_model:     A string representing the body's content model
+                          ie. 'tei-annotation'
+</code></pre>
+
+<p>Example Python code to call service:</p>
+
+<pre><code>import base64
+import urllib
+import urllib2
+post_url = "http://your.url/oac_web_service/create"
+params = { 
+    "source_uri"            : "test:1",
+    "body_content"          : "&lt;TEI&gt;&lt;body&gt;text body&lt;/body&gt;&lt;/TEI&gt;",
+    "body_mimetype"         : "text/xml",
+    "dc_title"              : "Open Annotation Collaboration Annotation object (A-1)",
+    "oa_selector"           : "/for/example/an/xpath/statement",
+    "oa_selector_type_uri"  : "oa:Fragment",
+    "fragment_type"         : "http://www.w3.org/TR/xpath/",
+    "annotator"             : "Gilbert",
+    "generator"             : "Web Client",
+    "body_content_model"    : "bdr-cmodel:tei-annotation"
+}
+encoded_data = urllib.urlencode( params )
+request = urllib2.Request( post_url, encoded_data )
+# Authenticate with Fedora credentials
+username = "your fedora user"
+password = "your fedora password"
+base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
+request.add_header( "Authorization", "Basic %s" % base64_auth_string )
+response = urllib2.urlopen( request )
+print response.read()
+</code></pre>
+
+<h4>Serialize</h4>
+
+<pre><code>A GET method that takes a comma seperated list of Annotation
+(A-1) PIDs to serialize as the 'pid' parameter.
+
+Required parameters:
+  pid:      Comma seperated list of PIDs to serialize.
+
+Optional parameters:
+  format:   Format of the serialization output
+            Options:
+              - rdf/xml or xml (default)
+              - rdf/json or json
+              - turtle or ttl
+              - nt
+              - n3
+</code></pre>
+
+<p>Example Python code to call service:</p>
+
+<pre><code>import urllib
+import urllib2
+get_url = "http://your.url/oac_web_service/show"
+params = { 
+  "pid"     : "test:9,test:166",
+  "format"  : "json"
+}
+args = urllib.urlencode( params )
+request = urllib2.Request( get_url + "?" + args)
+response = urllib2.urlopen( request )
+print response.read()
+</code></pre>
+
+<h4>Query</h4>
+
+<pre><code>A POST or GET method to query the Open Annotations index with a SPARQL Query
+This method has READ access to the Annotations index.
+
+Required parameters:
+  query:      The SPARQL query to execute
+</code></pre>
+
+<p>Example Python code to call service:</p>
+
+<pre><code>import urllib
+import urllib2
+get_url = "http://your.url/oac_web_service/sparql"
+params = { 
+  "query"     : "SELECT * { ?s ?p ?o }"
+}
+args = urllib.urlencode( params )
+request = urllib2.Request( get_url + "?" + args)
+response = urllib2.urlopen( request )
+print response.read()
+</code></pre>
+
+<h3>Demo</h3>
+
+<h3>Authors and Contributors</h3>
+
+<ul>
+<li>Andrew Ashton (<a href="https://github.com/andyashton" class="user-mention">@andyashton</a>): Primary Investigator</li>
+<li>Kyle Wilcox (<a href="https://github.com/kwilcox" class="user-mention">@kwilcox</a>): Developer</li>
+</ul><p>Funded by a grant from the Andrew W. Mellon Foundation, via the Open Annotation Collaboration.</p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+		
+  </body>
+</html>
