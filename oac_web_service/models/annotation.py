@@ -63,6 +63,13 @@ class Annotation(object):
         xmls = []
 
         for pid in pids:
+
+            # Make sure we only serialize Annotation objects
+            content_models = Fedora.get_content_models(pid)
+            oac_model = "info:fedora/%s" % app.config.get('DEFUALT_ANNOTATION_CONTENT_MODEL')
+            if oac_model not in content_models:
+                continue
+
             datastreams = Fedora.get_datastream_list(pid)
             if not isinstance(datastreams, list):
                 # There was an error with this PID, skip it

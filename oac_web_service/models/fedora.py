@@ -157,3 +157,23 @@ class Fedora(object):
         response = urllib2.urlopen( request )
         element = ET.fromstring(response.read())
         return element.find('{http://www.fedora.info/definitions/1/0/management/}pid').text
+
+    @classmethod
+    def get_content_models(cls, pid):
+        """
+            Query the Fedora system for an objects XML and pull out the content model strings
+        """
+        url = app.config['FEDORA_OBJECT_PID_URL'].replace('{pid}', pid)
+        url += "?format=xml"
+
+        request = urllib2.Request( url )
+
+        base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
+        request.add_header( "Authorization", "Basic %s" % base64_auth_string )
+        response = urllib2.urlopen( request )
+
+        element = ET.fromstring(response.read())
+        access_ns = "http://www.fedora.info/definitions/1/0/access/"
+
+        return [e.text for e in element.findall('{%s}objModels/{%s}model' % (access_ns, access_ns) )]
+    
