@@ -186,11 +186,13 @@ class Annotation(object):
         oac_model = app.config.get('DEFUALT_ANNOTATION_CONTENT_MODEL', '')
 
         # The PID of the SDef object for Annotation Serialization
-        serialization_service = "oac-sdef:serialize"
-
+        # This is not required by Fedora so it was removed.
+        # serialization_service = "oac-sdef:serialize"
+        #self.rels_ext_rdf_element = Foxml.get_rels_ext_model_element(pid=self._annotation_pid,
+        #                                                             models=[oac_model],
+        #                                                             services=[serialization_service])
         self.rels_ext_rdf_element = Foxml.get_rels_ext_model_element(pid=self._annotation_pid,
-                                                                     models=[oac_model],
-                                                                     services=[serialization_service])
+                                                                     models=[oac_model])
         foxml.create_xml_datastream(element=self.rels_ext_rdf_element,
                                     id="RELS-EXT",
                                     mime="application/rdf+xml",
