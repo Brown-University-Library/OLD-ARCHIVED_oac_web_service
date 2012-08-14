@@ -11,7 +11,7 @@ import os
 
 # Create path to persistant index
 if app.config.get('STORE_LOCATION', None) is None:
-    app.config['STORE_LOCATION'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+    raise IOError(0, "Must define an absolute path for STORE_LOCATION in the config: %s" % app.config['STORE_LOCATION'])
 
 if not os.access(app.config['STORE_LOCATION'], os.W_OK | os.X_OK):
     raise IOError(0, "Can't write to STORE_LOCATION, check configuration: %s" % app.config['STORE_LOCATION'])

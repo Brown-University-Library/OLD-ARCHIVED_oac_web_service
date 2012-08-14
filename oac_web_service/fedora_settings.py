@@ -12,8 +12,8 @@ DEFUALT_ANNOTATION_CONTENT_MODEL = "oac:oa-annotation"
 
 # The folder location where the index store should be created and kept.
 # Path needs to be writable by the user running Tomcat
-import os
-STORE_LOCATION = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+# Path needs to be absolute	
+STORE_LOCATION = ""
 
 BASE_WEBAPP_FOLDER = "fedora"
 
