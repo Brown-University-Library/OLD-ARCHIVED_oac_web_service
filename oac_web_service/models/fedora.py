@@ -176,4 +176,3 @@ class Fedora(object):
         access_ns = "http://www.fedora.info/definitions/1/0/access/"
 
         return [e.text for e in element.findall('{%s}objModels/{%s}model' % (access_ns, access_ns) )]
-    

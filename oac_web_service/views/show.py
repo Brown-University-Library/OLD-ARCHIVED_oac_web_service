@@ -25,7 +25,7 @@ def show():
         if len(pids) == 0:
             raise AnnotationError("Must pass in at least one PID using the 'pid' parameter.")
         format = request.args.get('format', 'rdf/xml')
-        result, mimetype = Annotation.serialize(pids, format)
+        result, mimetype = Annotation.serialize(pids, format=format, check_object=True)
     except AnnotationError, ex:
         return jsonify({'value' : ex.value, 'trace' : traceback.format_stack()})
     except Exception, ex:

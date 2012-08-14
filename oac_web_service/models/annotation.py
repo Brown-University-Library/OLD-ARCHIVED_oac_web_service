@@ -43,7 +43,7 @@ class Annotation(object):
         self.build_annotation()
 
     @classmethod
-    def serialize(cls, pids, format=None):
+    def serialize(cls, pids, format=None, check_object=None):
         """
         Get list of datastreams from an array of PIDs
 
@@ -56,19 +56,27 @@ class Annotation(object):
             - turtle or ttl
             - nt
             - n3
+
+        Optional "check_object" parameter will check the object's
+        content model before serializing to make sure it is equal to the
+        default content type for annotate objects set in the config.
         """
         if format is None:
             format = 'xml'
+
+        if check_object is None:
+            check_object = True
 
         xmls = []
 
         for pid in pids:
 
             # Make sure we only serialize Annotation objects
-            content_models = Fedora.get_content_models(pid)
-            oac_model = "info:fedora/%s" % app.config.get('DEFUALT_ANNOTATION_CONTENT_MODEL')
-            if oac_model not in content_models:
-                continue
+            if check_object:
+                content_models = Fedora.get_content_models(pid)
+                oac_model = "info:fedora/%s" % app.config.get('DEFUALT_ANNOTATION_CONTENT_MODEL')
+                if oac_model not in content_models:
+                    continue
 
             datastreams = Fedora.get_datastream_list(pid)
             if not isinstance(datastreams, list):
