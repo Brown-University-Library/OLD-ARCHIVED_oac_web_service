@@ -1,1 +1,1 @@
-from oac_web_service.views import create, index, show, sparql, flush
+from oac_web_service.views import create, index, show, sparql, flush, rebuild
