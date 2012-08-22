@@ -9,11 +9,6 @@ params = {
 }
 encoded_data = urllib.urlencode( params )
 request = urllib2.Request( post_url, encoded_data )
-# Authenticate with Fedora credentials
-username = ""
-password = ""
-base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
-request.add_header( "Authorization", "Basic %s" % base64_auth_string )
-
 response = urllib2.urlopen( request )
+
 print response.read()
