@@ -73,7 +73,11 @@ class Annotation(object):
 
             # Make sure we only serialize Annotation objects
             if check_object:
-                content_models = Fedora.get_content_models(pid)
+                try:
+                    content_models = Fedora.get_content_models(pid)
+                except:
+                    raise AnnotationError("PID %s not found in Fedora" % pid)
+                    
                 oac_model = "info:fedora/%s" % app.config.get('DEFUALT_ANNOTATION_CONTENT_MODEL')
                 if oac_model not in content_models:
                     continue
