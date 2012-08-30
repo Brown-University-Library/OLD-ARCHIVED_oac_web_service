@@ -35,7 +35,7 @@ public class MessageListenerImpl implements MessageListener {
     public void onMessage(Message message) {
         if ((message instanceof TextMessage)) {
             try {
-                LOG.info(((TextMessage)message).getText());
+                LOG.debug(((TextMessage)message).getText());
 
                 // Load message into DOM
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -46,20 +46,20 @@ public class MessageListenerImpl implements MessageListener {
 
                 // Find the PID
                 String pid = doc.getElementsByTagName("summary").item(0).getChildNodes().item(0).getNodeValue();
-                LOG.info("PID: " + pid);
+                LOG.debug("PID: " + pid);
 
                 // Find the type of action
                 String title = doc.getElementsByTagName("title").item(0).getChildNodes().item(0).getNodeValue();
-                LOG.info("Action title: " + title);
+                LOG.debug("Action title: " + title);
 
                 // Find the URL to Fedora
                 String url = doc.getElementsByTagName("uri").item(0).getChildNodes().item(0).getNodeValue();
-                LOG.info("Fedora URL: " + url);
+                LOG.debug("Fedora URL: " + url);
 
                 // Split the subdirectory (usually 'fedora') off the URL and replace with 'oac_web_service/rebuild'
                 List url_list = Arrays.asList(url.split("/"));
                 String rebuild_url = StringUtils.join(url_list.subList(0,url_list.size() - 1), '/') + "/oac_web_service/rebuild_one";
-                LOG.info("Rebuild URL: " + rebuild_url);
+                LOG.debug("Rebuild URL: " + rebuild_url);
 
                 // We are going to rebuild on all actions EXCEPT ingest.
                 if (title != "ingest") {
@@ -83,7 +83,7 @@ public class MessageListenerImpl implements MessageListener {
                     BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     String line;
                     while ((line = rd.readLine()) != null) {
-                        LOG.info("Response: " + line);
+                        LOG.debug("Response: " + line);
                     }
                     os.close();
                     rd.close();
