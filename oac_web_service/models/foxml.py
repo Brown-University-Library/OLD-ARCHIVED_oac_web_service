@@ -111,7 +111,6 @@ class Foxml(object):
 
         return rdf
 
-
     @classmethod
     def get_annotation_rdf_element(cls, **kwargs):
         """
@@ -312,6 +311,45 @@ class Foxml(object):
         oai_dc.append(title)
         oai_dc.append(identifier)
         return oai_dc
+
+    @classmethod
+    def get_body_inline_rdf_element(cls, **kwargs):
+        """
+        <rdf:RDF>
+            <rdf:Description rdf:about="{{BODY_URI}}">
+                <rdf:type rdf:resource="oa:Body"/>
+                <rdf:type rdf:resource="cnt:ContentAsText"/>
+                <cnt:chars>{{BODY_INLINE}}</cnt:chars>
+                <dc:format>text/plain</dc:format>
+            </rdf:Description>
+        </rdf:RDF>
+        """
+        body_uri = kwargs.pop('body_uri')
+        body_inline = kwargs.pop('body_inline')
+
+        descrip = Element("{%s}Description" % cls.RDFNS)
+        descrip.set("{%s}about" % cls.RDFNS, body_uri)
+
+        body_type = Element("{%s}type" % cls.RDFNS)
+        body_type.set("{%s}resource" % cls.RDFNS, "oa:Body")
+        descrip.append(body_type)
+
+        cont_type = Element("{%s}type" % cls.RDFNS)
+        cont_type.set("{%s}resource" % cls.RDFNS, "cnt:ContentAsText")
+        descrip.append(cont_type)
+
+        content = Element("{%s}chars" % cls.CNT_NS)
+        content.text = body_inline
+        descrip.append(content)
+
+        format = Element("{%s}format" % cls.DC_NS)
+        format.text = "text/plain"
+        descrip.append(format)
+
+        rdf = Element("{%s}RDF" % cls.RDFNS)
+        rdf.append(descrip)
+
+        return rdf
 
     @classmethod
     def get_datastream_element(cls, **kwargs):

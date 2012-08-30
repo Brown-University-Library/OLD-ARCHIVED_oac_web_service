@@ -25,6 +25,10 @@ def create():
         dc_title:               Dublin Core title associated with the annotation, 
                                 i.e. "dublin core title goes here" 
 
+        body_inline             Plain text string to store as the body
+
+            OR
+
         body_content:           Contents of the body (XML, text, json, etc.)
             AND
         body_mimetype:          Mimetype of the body_content
@@ -84,6 +88,7 @@ def create():
         annote = Annotation(source_uri = request.form.get('source_uri'),
                             dc_title = request.form.get('dc_title'),
                             annotated = datetime.utcnow(),
+                            body_inline = request.form.get('body_inline', None),
                             body_content = request.form.get('body_content', None),
                             body_mimetype = request.form.get('body_mimetype', None),
                             body_uri = request.form.get('body_uri', None),
@@ -120,6 +125,10 @@ def create():
                     relsext_input_stream = ByteArrayInputStream(String(tostring(annote.rels_ext_rdf_element)).getBytes())
                     model.read(relsext_input_stream, None)
                     relsext_input_stream.close()
+                if annote.body_inline_rdf_element is not None:
+                    body_inline_input_stream = ByteArrayInputStream(String(tostring(annote.body_inline_rdf_element)).getBytes())
+                    model.read(body_inline_input_stream, None)
+                    body_inline_input_stream.close()
                 model.commit()
                 model.close()
                 dataset.commit() 

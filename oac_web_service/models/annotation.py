@@ -17,11 +17,12 @@ class Annotation(object):
         self._source_uri = kwargs.pop('source_uri', None)
         self._dc_title = kwargs.pop('dc_title', None)
 
-        # Either a URI or a content/mimetype pair must be present
+        # Either an inline, URI, or a content/mimetype pair must be present
         self._body_uri = kwargs.pop('body_uri', None)
         self._body_content = kwargs.pop('body_content', None)
         self._body_mimetype = kwargs.pop('body_mimetype', None)
         self._body_content_model = kwargs.pop('body_content_model', None)
+        self._body_inline = kwargs.pop('body_inline', None)
         
         # Optional fields
         self._annotated = kwargs.pop('annotated', None)
@@ -39,7 +40,6 @@ class Annotation(object):
         self._body = None
         self._annotation = None
         self.build_body() 
-        assert self._body_uri is not None
         self.build_annotation()
 
     @classmethod
@@ -125,7 +125,7 @@ class Annotation(object):
             Fedora.put_datastream(pid=self._annotation_pid, dsid=dc_annotation, element=dubln_core)
 
     def build_body(self):
-        if self._body_uri is None:
+        if self._body_uri is None and self._body_inline is None:
             try:
                 assert self._body_content is not None
                 assert self._body_mimetype is not None
@@ -184,6 +184,20 @@ class Annotation(object):
                                     label="Dublin Core Record for this object",
                                     fedora_uri=dc_uri,
                                     format_uri="http://www.openarchives.org/OAI/2.0/oai_dc/")
+
+
+        # Inline Body Datastream
+        self.body_inline_rdf_element = None
+        if self._body_inline is not None:
+            self._body_uri = "%s/inlinebody" % self._annotation_uri
+            self.body_inline_rdf_element = Foxml.get_body_inline_rdf_element(pid=self._annotation_pid,
+                                                                     body_uri=self._body_uri,
+                                                                     body_inline=self._body_inline)
+            foxml.create_xml_datastream(element=self.body_inline_rdf_element,
+                                        id="inlinebody",
+                                        mime="application/rdf+xml",
+                                        label="Inline Body for OAC annotation",
+                                        fedora_uri=self._body_uri)
 
         # Annotation Datastream
         anno_uri = "%s/annotation" % self._annotation_uri
