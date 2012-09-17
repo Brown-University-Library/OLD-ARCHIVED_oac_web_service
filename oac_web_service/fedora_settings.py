@@ -7,12 +7,15 @@ FEDORA_PASS = ""
 # that manipulate data.
 OAC_USER = ""
 OAC_PASS = ""
+# Endpont to the OAC service, ie. "http://daxdev.services.brown.edu:8081/oac_web_service" (no trailing slash required)
+# Optional.  Use only if messaging is enabled AND if the OAC service is running on a different URL or port than Fedora.
+OAC_ENDPOINT = ""
 
 DEFUALT_ANNOTATION_CONTENT_MODEL = "oac:oa-annotation"
 
 # The folder location where the index store should be created and kept.
 # Path needs to be writable by the user running Tomcat
-# Path needs to be absolute	
+# Can use python code here, ie. the os.path module
 STORE_LOCATION = ""
 
 BASE_WEBAPP_FOLDER = "fedora"
