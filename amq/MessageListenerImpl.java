@@ -63,6 +63,9 @@ public class MessageListenerImpl implements MessageListener {
                 configFile.load(new FileInputStream(config_path));
 
                 String baseUrl = configFile.getProperty("OAC_ENDPOINT");
+                // Strip quotes from String
+                baseUrl = baseUrl.replace("\"","");
+                LOG.debug("OAC Base URL from config file: " + baseUrl);
                 if (baseUrl.equals("") || baseUrl.equals("\"\"") || baseUrl.equals("''")) {
                     // Find the URL to Fedora
                     String url = doc.getElementsByTagName("uri").item(0).getChildNodes().item(0).getNodeValue();
