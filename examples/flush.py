@@ -11,7 +11,7 @@ params = {
 }
 args = urllib.urlencode( params )
 request = urllib2.Request( get_url + "?" + args)
-
+# Authenticate with OAC credentials (defined in the OAC configuration file)
 username = ""
 password = ""
 base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]

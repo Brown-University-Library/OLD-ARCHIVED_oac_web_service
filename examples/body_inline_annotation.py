@@ -16,7 +16,7 @@ params = {  'oax_style_uri'         : u'info:fedora/test:1000010118',
 
 encoded_data = urllib.urlencode( params )
 request = urllib2.Request( post_url, encoded_data )
-# Authenticate with Fedora credentials
+# Authenticate with OAC credentials (defined in the OAC configuration file)
 username = ""
 password = ""
 base64_auth_string = base64.encodestring( '%s:%s' % (username, password) )[:-1]
