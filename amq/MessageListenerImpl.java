@@ -60,7 +60,7 @@ public class MessageListenerImpl implements MessageListener {
                     config_path = "../../oac_web_service/fedora_settings.py";
                 }
                 LOG.info("Config Path: " + config_path);
-                configFile.load(this.getClass().getClassLoader().getResourceAsStream(config_path));
+                configFile.load(new FileInputStream(config_path));
 
                 String baseUrl = configFile.getProperty("OAC_ENDPOINT");
                 if (baseUrl.equals("") || baseUrl.equals("\"\"") || baseUrl.equals("''")) {
