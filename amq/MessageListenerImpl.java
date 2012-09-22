@@ -71,7 +71,7 @@ public class MessageListenerImpl implements MessageListener {
                     String url = doc.getElementsByTagName("uri").item(0).getChildNodes().item(0).getNodeValue();
                     LOG.info("Fedora URL: " + url);
                     List url_list = Arrays.asList(url.split("/"));
-                    baseUrl = StringUtils.join(url_list.subList(0,url_list.size() - 1), '/');
+                    baseUrl = StringUtils.join(url_list.subList(0,url_list.size() - 1), '/') + "/oac_web_service";
                 }
                 LOG.debug("OAC Base URL: " + baseUrl);
                 String rebuild_url = baseUrl + "/rebuild_one";
