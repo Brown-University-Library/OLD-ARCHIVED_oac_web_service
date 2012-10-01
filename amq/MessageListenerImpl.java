@@ -57,7 +57,9 @@ public class MessageListenerImpl implements MessageListener {
                 Properties configFile = new Properties();
                 String config_path = System.getenv("FEDORA_SETTINGS");
                 if (config_path == null) {
-                    config_path = "../../oac_web_service/fedora_settings.py";
+                    Class myclass = Class.forName("amq.MessageListenerImpl");
+                    String tmpDir = new File(myclass.getProtectionDomain().getCodeSource().getLocation().getFile()).getParentFile().getParentFile().getParentFile().getAbsolutePath();
+                    config_path = new File(tmpDir + File.separator + "oac_web_service" + File.separator + "fedora_settings.py").getAbsolutePath();
                 }
                 LOG.info("Config Path: " + config_path);
                 configFile.load(new FileInputStream(config_path));
